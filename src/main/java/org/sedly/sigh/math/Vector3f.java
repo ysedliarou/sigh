@@ -11,7 +11,7 @@ public class Vector3f {
 
   public static final Vector3f ZERO = new Vector3f(0, 0, 0);
 
-  public static final Vector3f UNIT = new Vector3f(1, 1, 1);
+  public static final Vector3f XYZ = new Vector3f(1, 1, 1);
 
   public static final Vector3f UNIT_X = new Vector3f(1, 0, 0);
   public static final Vector3f UNIT_Y = new Vector3f(0, 1, 0);
@@ -79,7 +79,7 @@ public class Vector3f {
     if (ZERO.equals(a) || ZERO.equals(b)) {
       throw new IllegalStateException("Zero vector.");
     }
-    float dls = dot(a, b) / (a.length() * b.length());
+    float dls = dot(a, b) / (a.magnitude() * b.magnitude());
     return (float) Math.acos(MathUtil.clamp(dls, -1.0f, 1.0f));
   }
 
@@ -102,7 +102,7 @@ public class Vector3f {
     return div(this, a);
   }
 
-  public float length() {
+  public float magnitude() {
     return (float) Math.sqrt(x * x + y * y + z * z);
   }
 
@@ -118,7 +118,7 @@ public class Vector3f {
     if (ZERO.equals(this)) {
       throw new IllegalStateException("Zero vector.");
     }
-    float length = length();
+    float length = magnitude();
     if (length == 1.0f) {
       return copy();
     }
@@ -150,7 +150,7 @@ public class Vector3f {
   }
 
   public Matrix4f scale() {
-    return Transformation.builder().setScale(this).build().transform();
+    return Transformation.builder().setScaling(this).build().transform();
   }
 
   // --------------- COMMON ---------------

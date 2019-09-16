@@ -9,7 +9,7 @@ public class Transformation {
   public static class Builder {
 
     private Vector3f translation = Vector3f.ZERO;
-    private Vector3f scale = Vector3f.UNIT;
+    private Vector3f scaling = Vector3f.XYZ;
     private Quaternion rotation = Quaternion.UNIT;
 
     public Builder setTranslation(Vector3f translation) {
@@ -19,9 +19,9 @@ public class Transformation {
       return this;
     }
 
-    public Builder setScale(Vector3f scale) {
-      if (scale != null) {
-        this.scale =  scale;
+    public Builder setScaling(Vector3f scaling) {
+      if (scaling != null) {
+        this.scaling = scaling;
       }
       return this;
     }
@@ -46,14 +46,14 @@ public class Transformation {
     return new Builder()
         .setTranslation(translation)
         .setRotation(rotation)
-        .setScale(scale);
+        .setScaling(scaling);
   }
 
   // --------------- PROPERTIES ---------------
 
   private Vector3f translation;
 
-  private Vector3f scale;
+  private Vector3f scaling;
 
   private Quaternion rotation;
 
@@ -63,8 +63,8 @@ public class Transformation {
     return translation;
   }
 
-  public Vector3f getScale() {
-    return scale;
+  public Vector3f getScaling() {
+    return scaling;
   }
 
   public Quaternion getRotation() {
@@ -79,7 +79,7 @@ public class Transformation {
 
   private Transformation(Builder builder) {
     this.translation = builder.translation;
-    this.scale = builder.scale;
+    this.scaling = builder.scaling;
     this.rotation = builder.rotation;
   }
 
@@ -120,7 +120,7 @@ public class Transformation {
 
   public Matrix4f transform() {
     Matrix4f rotation = rotation(this.rotation);
-    Matrix4f scale = scale(this.scale);
+    Matrix4f scale = scale(this.scaling);
     Matrix4f translation = translation(this.translation);
 
     return translation.mult(rotation.mult(scale));

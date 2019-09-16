@@ -9,7 +9,7 @@ public class Quaternion {
 
   // --------------- CONSTANTS ---------------
 
-  public static final Quaternion ZERO = new Quaternion(0, 0, 0, 0);
+  private static final Quaternion ZERO = new Quaternion(0, 0, 0, 0);
 
   public static final Quaternion UNIT = new Quaternion(0, 0, 0, 1);
 
@@ -95,9 +95,36 @@ public class Quaternion {
     return new Quaternion(q1.x + q2.x, q1.y + q2.y, q1.z + q2.z, q1.w + q2.w);
   }
 
+  private static Quaternion slerp(Quaternion q1, Quaternion q2, float i) {
+    q1 = q1.normalize();
+    q2 = q2.normalize();
+
+    float dot = q1.dot(q2);
+    if (dot < 0.0f) {
+      q2 = q2.negate();
+      dot = -dot;
+    }
+
+    final float THRESHOLD = 0.9995f;
+    if (dot > THRESHOLD) {
+      return q2.sub(q1).scale(i).add(q1).normalize();
+    }
+
+    float alpha = (float) Math.acos(dot);
+    float beta = i * alpha;
+
+    float sinAlpha = (float) Math.sin(alpha);
+    float sinBeta = (float) Math.sin(beta);
+
+    float s1 = (float) Math.cos(beta) - dot * sinBeta / sinAlpha;
+    float s2 = sinBeta / sinAlpha;
+
+    return q1.scale(s1).add(q2.scale(s2));
+  }
+
   // --------------- METHODS ---------------
 
-  public float length() {
+  public float magnitude() {
     return (float) Math.sqrt(x * x + y * y + z * z + w * w);
   }
 
@@ -105,7 +132,7 @@ public class Quaternion {
     if (ZERO.equals(this)) {
       throw new IllegalStateException("Zero quaternion.");
     }
-    float length = length();
+    float length = magnitude();
     if (length == 1.0f) {
       return copy();
     }
@@ -116,12 +143,20 @@ public class Quaternion {
     return new Quaternion(-x, -y, -z, w);
   }
 
+  public Quaternion negate() {
+    return scale(-1);
+  }
+
   public float dot(Quaternion q) {
     return dot(this, q);
   }
 
   public Quaternion scale(float a) {
     return scale(this, a);
+  }
+
+  public Quaternion slerp(Quaternion q, float i) {
+    return slerp(this, q, i);
   }
 
   public Quaternion mult(Quaternion q) {
