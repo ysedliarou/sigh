@@ -9,5 +9,8 @@
         <module name="sigh" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sigh" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -54,7 +54,7 @@ public class Vector3f {
   }
 
   private static Vector3f scale(Vector3f v, float a) {
-    return new Vector3f(v.x * a, v.y * a,v.z * a);
+    return new Vector3f(v.x * a, v.y * a, v.z * a);
   }
 
   private static Vector3f div(Vector3f v, float a) {
