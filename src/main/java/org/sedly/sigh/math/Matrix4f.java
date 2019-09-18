@@ -7,11 +7,11 @@ import java.util.Arrays;
 
 public class Matrix4f {
 
-  private static abstract class Operation {
+  private abstract static class Operation {
 
     float[][] source, target;
 
-    Operation(float[][] source, float[][] target) {
+    Operation(final float[][] source, final float[][] target) {
       this.source = source;
       this.target = target;
     }
@@ -32,7 +32,7 @@ public class Matrix4f {
 
   // --------------- PROPERTIES ---------------
 
-  private final float matrix[][];
+  private final float[][] matrix;
 
   // --------------- GETTERS ---------------
 
@@ -42,30 +42,30 @@ public class Matrix4f {
 
   // --------------- CONSTRUCTORS ---------------
 
-  public Matrix4f(float[][] matrix) {
+  public Matrix4f(final float[][] matrix) {
     this(createGetOperation(matrix));
   }
 
-  private Matrix4f(Operation operation) {
+  private Matrix4f(final Operation operation) {
     this.matrix = fill(operation);
   }
 
   // --------------- METHODS ---------------
 
-  private static Operation createGetOperation(float[][] matrix) {
+  private static Operation createGetOperation(final float[][] matrix) {
     return new Operation(matrix, null) {
       @Override
-      float operate(int i, int j) {
+      float operate(final int i, final int j) {
         return this.source[i][j];
       }
     };
   }
 
-  public float get(int i, int j) {
+  public float get(final int i, final int j) {
     return matrix[i][j];
   }
 
-  private static float[][] fill(Operation operation) {
+  private static float[][] fill(final Operation operation) {
     float[][] target = new float[SIZE][SIZE];
     for (int i = 0; i < SIZE; i++) {
       for (int j = 0; j < SIZE; j++) {
@@ -79,62 +79,65 @@ public class Matrix4f {
     return new Matrix4f(matrix);
   }
 
-  public static Matrix4f mult(Matrix4f m, float a) {
+  public static Matrix4f mult(final Matrix4f m, final float a) {
     return new Matrix4f(new Operation(m.matrix, null) {
       @Override
-      float operate(int i, int j) {
+      float operate(final int i, final int j) {
         return this.source[i][j] * a;
       }
     });
   }
 
-  public Matrix4f mult(float a) {
+  public Matrix4f mult(final float a) {
     return mult(this, a);
   }
 
-  public static Matrix4f div(Matrix4f m, float a) {
+  public static Matrix4f div(final Matrix4f m, final float a) {
+    if (a == 0.0f) {
+      throw new IllegalStateException("Zero division.");
+    }
     return new Matrix4f(new Operation(m.matrix, null) {
       @Override
-      float operate(int i, int j) {
+      float operate(final int i, final int j) {
         return this.source[i][j] / a;
       }
     });
   }
 
-  public Matrix4f div(float a) {
+  public Matrix4f div(final float a) {
     return div(this, a);
   }
 
-  public static Matrix4f add(Matrix4f m1, Matrix4f m2) {
+  public static Matrix4f add(final Matrix4f m1, final Matrix4f m2) {
     return new Matrix4f(new Operation(m1.matrix, m2.matrix) {
       @Override
-      float operate(int i, int j) {
+      float operate(final int i, final int j) {
         return this.source[i][j] + this.target[i][j];
       }
     });
   }
 
-  public Matrix4f add(Matrix4f m) {
+  public Matrix4f add(final Matrix4f m) {
     return add(this, m);
   }
 
-  public static Matrix4f sub(Matrix4f m1, Matrix4f m2) {
+  public static Matrix4f sub(final Matrix4f m1, final Matrix4f m2) {
     return new Matrix4f(new Operation(m1.matrix, m2.matrix) {
       @Override
-      float operate(int i, int j) {
+      float operate(final int i, final int j) {
         return this.source[i][j] - this.target[i][j];
       }
     });
   }
 
-  public Matrix4f sub(Matrix4f m) {
+  public Matrix4f sub(final Matrix4f m) {
     return sub(this, m);
   }
 
-  public Matrix4f mult(Matrix4f m) {
+  public Matrix4f mult(final Matrix4f m) {
     return new Matrix4f(new Operation(matrix, m.matrix) {
       @Override
-      float operate(int i, int j) {
+      float operate(final int i, final int j) {
         return this.source[i][0] * this.target[0][j]
             + this.source[i][1] * this.target[1][j]
             + this.source[i][2] * this.target[2][j]
@@ -143,7 +146,7 @@ public class Matrix4f {
     });
   }
 
-  public Vector3f mult(Vector3f v) {
+  public Vector3f mult(final Vector3f v) {
     float x = matrix[0][0] * v.getX() + matrix[0][1] * v.getY() + matrix[0][2] * v.getZ() + matrix[0][3];
     float y = matrix[1][0] * v.getX() + matrix[1][1] * v.getY() + matrix[1][2] * v.getZ() + matrix[1][3];
     float z = matrix[2][0] * v.getX() + matrix[2][1] * v.getY() + matrix[2][2] * v.getZ() + matrix[2][3];
@@ -157,7 +160,7 @@ public class Matrix4f {
   // --------------- COMMON ---------------
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!(o instanceof Matrix4f)) {
       return false;
     }
@@ -193,3 +196,4 @@ public class Matrix4f {
   }
 
 }
+

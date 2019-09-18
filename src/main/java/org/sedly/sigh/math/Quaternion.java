@@ -41,14 +41,14 @@ public class Quaternion {
 
   // --------------- CONSTRUCTORS ---------------
 
-  private Quaternion(float x, float y, float z, float w) {
+  private Quaternion(final float x, final float y, final float z, final float w) {
     this.x = x;
     this.y = y;
     this.z = z;
     this.w = w;
   }
 
-  public Quaternion(Vector3f axis, float angle) {
+  public Quaternion(final Vector3f axis, final float angle) {
     Vector3f normal = axis.normalize();
     float sinHalfAngle = (float) Math.sin(angle / 2);
     float cosHalfAngle = (float) Math.cos(angle / 2);
@@ -61,11 +61,11 @@ public class Quaternion {
 
   // --------------- MATH ---------------
 
-  private static float dot(Quaternion q1, Quaternion q2) {
+  private static float dot(final Quaternion q1, final Quaternion q2) {
     return q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
   }
 
-  private static Quaternion mult(Quaternion q1, Quaternion q2) {
+  private static Quaternion mult(final Quaternion q1, final Quaternion q2) {
     float x = q1.x * q2.w + q1.y * q2.z - q1.z * q2.y + q1.w * q2.x;
     float y = -q1.x * q2.z + q1.y * q2.w + q1.z * q2.x + q1.w * q2.y;
     float z = q1.x * q2.y - q1.y * q2.x + q1.z * q2.w + q1.w * q2.z;
@@ -74,7 +74,7 @@ public class Quaternion {
     return new Quaternion(x, y, z, w);
   }
 
-  private static Quaternion mult(Quaternion q, Vector3f v) {
+  private static Quaternion mult(final Quaternion q, final Vector3f v) {
     float w = -q.x * v.getX() - q.y * v.getY() - q.z * v.getZ();
     float x = q.w * v.getX() + q.y * v.getZ() - q.z * v.getY();
     float y = q.w * v.getY() + q.z * v.getX() - q.x * v.getZ();
@@ -83,31 +83,30 @@ public class Quaternion {
     return new Quaternion(x, y, z, w);
   }
 
-  private static Quaternion scale(Quaternion q, float a) {
+  private static Quaternion scale(final Quaternion q, final float a) {
     return new Quaternion(q.x * a, q.y * a, q.z * a, q.w * a);
   }
 
-  private static Quaternion sub(Quaternion q1, Quaternion q2) {
+  private static Quaternion sub(final Quaternion q1, final Quaternion q2) {
     return new Quaternion(q1.x - q2.x, q1.y - q2.y, q1.z - q2.z, q1.w - q2.w);
   }
 
-  private static Quaternion add(Quaternion q1, Quaternion q2) {
+  private static Quaternion add(final Quaternion q1, final Quaternion q2) {
     return new Quaternion(q1.x + q2.x, q1.y + q2.y, q1.z + q2.z, q1.w + q2.w);
   }
 
-  private static Quaternion slerp(Quaternion q1, Quaternion q2, float i) {
-    q1 = q1.normalize();
-    q2 = q2.normalize();
+  private static Quaternion slerp(final Quaternion q1, final Quaternion q2, final float i) {
+    Quaternion n1 = q1.normalize(), n2 = q2.normalize();
 
-    float dot = q1.dot(q2);
+    float dot = n1.dot(n2);
     if (dot < 0.0f) {
-      q2 = q2.negate();
+      n2 = n2.negate();
       dot = -dot;
     }
 
     final float THRESHOLD = 0.9995f;
     if (dot > THRESHOLD) {
-      return q2.sub(q1).scale(i).add(q1).normalize();
+      return n2.sub(n1).scale(i).add(n1).normalize();
     }
 
     float alpha = (float) Math.acos(dot);
@@ -119,7 +118,7 @@ public class Quaternion {
     float s1 = (float) Math.cos(beta) - dot * sinBeta / sinAlpha;
     float s2 = sinBeta / sinAlpha;
 
-    return q1.scale(s1).add(q2.scale(s2));
+    return n1.scale(s1).add(n2.scale(s2));
   }
 
   // --------------- METHODS ---------------
@@ -147,35 +146,35 @@ public class Quaternion {
     return scale(-1);
   }
 
-  public float dot(Quaternion q) {
+  public float dot(final Quaternion q) {
     return dot(this, q);
   }
 
-  public Quaternion scale(float a) {
+  public Quaternion scale(final float a) {
     return scale(this, a);
   }
 
-  public Quaternion slerp(Quaternion q, float i) {
+  public Quaternion slerp(final Quaternion q, final float i) {
     return slerp(this, q, i);
   }
 
-  public Quaternion mult(Quaternion q) {
+  public Quaternion mult(final Quaternion q) {
     return mult(this, q);
   }
 
-  public Quaternion mult(Vector3f v) {
+  public Quaternion mult(final Vector3f v) {
     return mult(this, v);
   }
 
-  public Vector3f rotate(Vector3f v) {
+  public Vector3f rotate(final Vector3f v) {
     return mult(v).mult(conjugate()).getDirection();
   }
 
-  public Quaternion sub(Quaternion q) {
+  public Quaternion sub(final Quaternion q) {
     return sub(this, q);
   }
 
-  public Quaternion add(Quaternion q) {
+  public Quaternion add(final Quaternion q) {
     return add(this, q);
   }
 
@@ -214,7 +213,7 @@ public class Quaternion {
   // --------------- COMMON ---------------
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!(o instanceof Quaternion)) {
       return false;
     }

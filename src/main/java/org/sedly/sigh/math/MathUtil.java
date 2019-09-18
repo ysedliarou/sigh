@@ -11,7 +11,7 @@ public final class MathUtil {
     super();
   }
 
-  public static float clamp(float val, float min, float max) {
+  public static float clamp(final float val, final float min, final float max) {
     return Math.max(min, Math.min(max, val));
   }
 

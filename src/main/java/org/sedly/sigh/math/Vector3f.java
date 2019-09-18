@@ -37,7 +37,7 @@ public class Vector3f {
 
   // --------------- CONSTRUCTORS ---------------
 
-  public Vector3f(float x, float y, float z) {
+  public Vector3f(final float x, final float y, final float z) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -45,37 +45,37 @@ public class Vector3f {
 
   // --------------- MATH ---------------
 
-  private static Vector3f add(Vector3f v1, Vector3f v2) {
+  private static Vector3f add(final Vector3f v1, final Vector3f v2) {
     return new Vector3f(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
   }
 
-  private static Vector3f sub(Vector3f v1, Vector3f v2) {
+  private static Vector3f sub(final Vector3f v1, final Vector3f v2) {
     return new Vector3f(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
   }
 
-  private static Vector3f scale(Vector3f v, float a) {
+  private static Vector3f scale(final Vector3f v, final float a) {
     return new Vector3f(v.x * a, v.y * a, v.z * a);
   }
 
-  private static Vector3f div(Vector3f v, float a) {
+  private static Vector3f div(final Vector3f v, final float a) {
     if (a == 0.0f) {
       throw new IllegalStateException("Zero division.");
     }
     return new Vector3f(v.x / a, v.y / a, v.z / a);
   }
 
-  private static float dot(Vector3f v1, Vector3f v2) {
+  private static float dot(final Vector3f v1, final Vector3f v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
   }
 
-  private static Vector3f cross(Vector3f v1, Vector3f v2) {
+  private static Vector3f cross(final Vector3f v1, final Vector3f v2) {
     float x = v1.y * v2.z - v1.z * v2.y;
     float y = v1.z * v2.x - v1.x * v2.z;
     float z = v1.x * v2.y - v1.y * v2.x;
     return new Vector3f(x, y, z);
   }
 
-  private static float angle(Vector3f a, Vector3f b) {
+  private static float angle(final Vector3f a, final Vector3f b) {
     if (ZERO.equals(a) || ZERO.equals(b)) {
       throw new IllegalStateException("Zero vector.");
     }
@@ -86,19 +86,19 @@ public class Vector3f {
   // --------------- METHODS ---------------
 
 
-  public Vector3f add(Vector3f v) {
+  public Vector3f add(final Vector3f v) {
     return add(this, v);
   }
 
-  public Vector3f sub(Vector3f v) {
+  public Vector3f sub(final Vector3f v) {
     return sub(this, v);
   }
 
-  public Vector3f scale(float a) {
+  public Vector3f scale(final float a) {
     return scale(this, a);
   }
 
-  public Vector3f div(float a) {
+  public Vector3f div(final float a) {
     return div(this, a);
   }
 
@@ -106,11 +106,11 @@ public class Vector3f {
     return (float) Math.sqrt(x * x + y * y + z * z);
   }
 
-  public float dot(Vector3f v) {
+  public float dot(final Vector3f v) {
     return dot(this, v);
   }
 
-  public Vector3f cross(Vector3f v) {
+  public Vector3f cross(final Vector3f v) {
     return cross(this, v);
   }
 
@@ -125,7 +125,7 @@ public class Vector3f {
     return div(this, length);
   }
 
-  public float angle(Vector3f v) {
+  public float angle(final Vector3f v) {
     return angle(this, v);
   }
 
@@ -133,11 +133,11 @@ public class Vector3f {
     return scale(this, -1.0f);
   }
 
-  public Vector3f rotate(Vector3f axis, float angle) {
+  public Vector3f rotate(final Vector3f axis, final float angle) {
     return rotate(new Quaternion(axis, angle));
   }
 
-  public Vector3f rotate(Quaternion rotation) {
+  public Vector3f rotate(final Quaternion rotation) {
     return rotation.rotate(this);
   }
 
@@ -156,7 +156,7 @@ public class Vector3f {
   // --------------- COMMON ---------------
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!(o instanceof Vector3f)) {
       return false;
     }
