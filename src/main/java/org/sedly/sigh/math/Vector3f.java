@@ -146,11 +146,11 @@ public class Vector3f {
   }
 
   public Matrix4f translation() {
-    return Transformation.builder().setTranslation(this).build().transform();
+    return Transformation.builder().setTranslation(this).build().transformation();
   }
 
   public Matrix4f scale() {
-    return Transformation.builder().setScaling(this).build().transform();
+    return Transformation.builder().setScaling(this).build().transformation();
   }
 
   // --------------- COMMON ---------------

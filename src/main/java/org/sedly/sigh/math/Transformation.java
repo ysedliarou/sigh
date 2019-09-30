@@ -119,7 +119,7 @@ public final class Transformation {
     return new Builder();
   }
 
-  public Matrix4f transform() {
+  public Matrix4f transformation() {
     Matrix4f rotation = rotation(this.rotation);
     Matrix4f scale = scale(this.scaling);
     Matrix4f translation = translation(this.translation);
@@ -128,7 +128,7 @@ public final class Transformation {
   }
 
   public Vector3f transform(final Vector3f v) {
-    return transform().mult(v);
+    return transformation().mult(v);
   }
 
 }
