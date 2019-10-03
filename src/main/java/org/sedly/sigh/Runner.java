@@ -1,17 +1,23 @@
 package org.sedly.sigh;
 
+import java.util.Vector;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import org.sedly.sigh.math.MathUtil;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Projection;
 import org.sedly.sigh.math.Quaternion;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
-import org.sedly.sigh.model.Light;
+import org.sedly.sigh.math.View;
+import org.sedly.sigh.model.Camera;
+import org.sedly.sigh.shader.PhongShader;
+import org.sedly.sigh.shader.StaticShader;
+import org.sedly.sigh.shader.light.BaseLight;
+import org.sedly.sigh.shader.light.DirectionalLight;
+import org.sedly.sigh.shader.light.Light;
 import org.sedly.sigh.model.Loader;
 import org.sedly.sigh.model.Mesh;
 import org.sedly.sigh.model.Model;
@@ -19,7 +25,7 @@ import org.sedly.sigh.model.ObjLoader;
 import org.sedly.sigh.model.Renderer;
 import org.sedly.sigh.model.Texture;
 import org.sedly.sigh.model.TexturedMesh;
-import org.sedly.sigh.shader.StaticShader;
+import org.sedly.sigh.shader.light.SpecularReflection;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -48,11 +54,17 @@ public class Runner {
     glfwSetErrorCallback(null).free();
   }
 
-  private Vector3f position = new Vector3f(0, 4, 20);
+  private Camera camera = new Camera();
 
   public Matrix4f view() {
-    return Transformation.builder().setTranslation(position.negate()).build().transformation();
+    return View.builder()
+        .position(camera.getPosition())
+        .forward(camera.getForward())
+        .up(camera.getUp())
+        .build()
+        .view();
   }
+
 
   private void init() {
     // Setup an error callback. The default implementation
@@ -81,33 +93,31 @@ public class Runner {
       }
 
       if (key == GLFW.GLFW_KEY_W && action == GLFW.GLFW_PRESS) {
-        position = position.add(new Vector3f(0.0f, 0.0f, -0.2f));
+        camera.move(Vector3f.UNIT_Z, 2);
         System.out.println("W");
       }
       if (key == GLFW.GLFW_KEY_S && action == GLFW.GLFW_PRESS) {
-        position = position.add(new Vector3f(0.0f, 0.0f, 0.2f));
+        camera.move(Vector3f.UNIT_Z, -2);
         System.out.println("S");
       }
       if (key == GLFW.GLFW_KEY_A && action == GLFW.GLFW_PRESS) {
-        position = position.add(new Vector3f(-0.2f, 0.0f, 0.0f));
+        camera.move(Vector3f.UNIT_X, 2);
         System.out.println("A");
       }
       if (key == GLFW.GLFW_KEY_D && action == GLFW.GLFW_PRESS) {
-        position = position.add(new Vector3f(0.2f, 0.0f, 0.0f));
+        camera.move(Vector3f.UNIT_X, -2);
         System.out.println("D");
       }
 
       if (key == GLFW.GLFW_KEY_Q && action == GLFW.GLFW_PRESS) {
-        position = position.rotate(new Quaternion(Vector3f.UNIT_Y, -0.2f));
+        camera.rotateY(0.2f);
         System.out.println("q");
       }
 
       if (key == GLFW.GLFW_KEY_E && action == GLFW.GLFW_PRESS) {
-        position = position.rotate(new Quaternion(Vector3f.UNIT_Y, 0.2f));
-        System.out.println("q");
+        camera.rotateY(-0.2f);
+        System.out.println("e");
       }
-
-      System.out.println(position);
 
     });
 
@@ -150,25 +160,23 @@ public class Runner {
     Renderer renderer = new Renderer();
     Loader loader = new Loader();
 
+    // PhongShader shader = new PhongShader();
     StaticShader shader = new StaticShader();
 
-    Model model = ObjLoader.loadObjModel("stall.obj");
+    Model model = ObjLoader.loadObjModel("dragon.obj");
 
-    Texture texture = loader.texture("stall.png");
-    texture.setShineDamper(10);
-    texture.setReflectivity(1);
+    Texture texture = loader.texture("white.png");
+
     Mesh mesh = loader.create(model);
 
     TexturedMesh texturedMesh = new TexturedMesh(mesh, texture);
 
-    Vector3f t = new Vector3f(0, 0, -1.5f);
-
-    float angleLight = 0.009f;
     float angleModel = 0.001f;
+    float angleLight = 0.04f;
+    float t = 0;
 
-    Vector3f lightPosition = position; // new Vector3f(-15, 0, 0);
 
-    float r = 0.01f, g = 0.01f, b = 0.01f;
+    // TODO Rotate 180 to see model
 
     // Run the rendering loop until the user has attempted to close
     // the window or has pressed the ESCAPE key.
@@ -176,30 +184,41 @@ public class Runner {
       glfwSwapBuffers(window); // swap the color buffers
 
       Matrix4f tr = Transformation.builder()
-          .setTranslation(t)
+          .setTranslation(new Vector3f(0, 0, 0))
+          // .setScaling(new Vector3f(0.1f,0.1f,0.1f))
           .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
           .build().transformation();
 
       Matrix4f pr = Projection.builder().xy(WIDTH, HEIGHT).build().projection();
 
-      Light light = new Light(lightPosition, new Vector3f(1,1,1));
-      r = g = b += 0.001;
+      Vector3f baseColor = new Vector3f(1, 1, 1);
+      Vector3f ambientLight = new Vector3f(0.06f, 0.06f, 0.06f);
+      BaseLight baseLight = new BaseLight(new Vector3f(1f,1f,1f), 1f);
+      DirectionalLight directionalLight = new DirectionalLight(baseLight, new Vector3f(0,0,-20));
+
+      SpecularReflection specularReflection = new SpecularReflection(1f, 150f);
 
       renderer.prepare();
+
+      shader.init();
       shader.start();
+
       shader.loadTransformationMatrix(tr);
       shader.loadProjectionMatrix(pr);
       shader.loadViewMatrix(view());
-      shader.loadLight(light);
-      shader.loadShine(texture.getShineDamper(), texture.getReflectivity());
+
+      // shader.loadBaseColor(baseColor);
+      // shader.loadAmbientLight(ambientLight);
+      // shader.loadDirectionalLight(directionalLight);
+      // shader.loadSpecularReflection(specularReflection);
+
+      shader.loadShine(150, 1);
+      shader.loadLight(new Light(new Vector3f(0,0,-20), new Vector3f(1,1,1), 1));
+
       renderer.render(texturedMesh);
       shader.stop();
 
-      // lightPosition = lightPosition.rotate(new Quaternion(Vector3f.UNIT_Y, angleLight));
-
-      // t = t.sub(new Vector3f(0.000f, 0.0f, 0.001f));
-      angleModel += 0.004;
-
+      angleModel -= 0.004;
 
       // Poll for window events. The key callback above will only be
       // invoked during this call.

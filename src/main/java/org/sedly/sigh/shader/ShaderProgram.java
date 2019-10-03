@@ -12,6 +12,10 @@ import org.sedly.sigh.math.Vector3f;
 
 public abstract class ShaderProgram {
 
+  public static final String POSITION = "position";
+  public static final String NORMAL = "normal";
+  public static final String TEX_COORD = "texCoord";
+
   private int programId;
 
   private int vsId;
@@ -26,7 +30,6 @@ public abstract class ShaderProgram {
     GL20.glAttachShader(programId, fsId);
     bind();
     GL20.glLinkProgram(programId);
-    getAllUniformLocations();
   }
 
   public void start() {
@@ -48,7 +51,11 @@ public abstract class ShaderProgram {
 
   protected abstract void bind();
 
-  protected abstract void getAllUniformLocations();
+  public void init() {
+    initUniformLocations();
+  }
+
+  protected abstract void initUniformLocations();
 
   public void loadFloat(int location, float value) {
     GL20.glUniform1f(location, value);

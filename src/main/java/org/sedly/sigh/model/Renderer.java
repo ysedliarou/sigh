@@ -4,18 +4,22 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL32;
 
 public class Renderer {
 
   public Renderer() {
     GL11.glFrontFace(GL11.GL_CCW);
-    GL11.glEnable(GL11.GL_CULL_FACE);
+
     GL11.glCullFace(GL11.GL_BACK);
+    GL11.glEnable(GL11.GL_CULL_FACE);
+
+    GL11.glEnable(GL11.GL_DEPTH_TEST);
+    GL11.glEnable(GL32.GL_DEPTH_CLAMP);
+
   }
 
   public void prepare() {
-
-    GL11.glEnable(GL11.GL_DEPTH_TEST);
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     GL11.glClearColor(0, 0, 0, 1);
   }

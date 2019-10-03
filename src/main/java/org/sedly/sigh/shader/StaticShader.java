@@ -1,8 +1,7 @@
 package org.sedly.sigh.shader;
 
 import org.sedly.sigh.math.Matrix4f;
-import org.sedly.sigh.math.Vector3f;
-import org.sedly.sigh.model.Light;
+import org.sedly.sigh.shader.light.Light;
 
 public class StaticShader extends ShaderProgram {
 
@@ -13,8 +12,9 @@ public class StaticShader extends ShaderProgram {
   private int locationProjectionMatrix;
   private int locationViewMatrix;
 
-  private int locationLightPosition;
+  private int locationLightDirection;
   private int locationLightColour;
+  private int locationLightIntensity;
   private int locationShineDamper;
   private int locationReflectivity;
 
@@ -24,19 +24,20 @@ public class StaticShader extends ShaderProgram {
 
   @Override
   protected void bind() {
-    bind(0, "position");
-    bind(1, "texCoords");
-    bind(2, "normal");
+    bind(0, POSITION);
+    bind(1, TEX_COORD);
+    bind(2, NORMAL);
   }
 
   @Override
-  protected void getAllUniformLocations() {
+  protected void initUniformLocations() {
     locationTransformationMatrix = getUniformLocation("transformationMatrix");
     locationProjectionMatrix = getUniformLocation("projectionMatrix");
     locationViewMatrix = getUniformLocation("viewMatrix");
 
-    locationLightPosition = getUniformLocation("lightPosition");
+    locationLightDirection = getUniformLocation("lightDirection");
     locationLightColour = getUniformLocation("lightColour");
+    locationLightIntensity = getUniformLocation("lightIntensity");
     locationShineDamper = getUniformLocation("shineDamper");
     locationReflectivity = getUniformLocation("reflectivity");
   }
@@ -54,8 +55,9 @@ public class StaticShader extends ShaderProgram {
   }
 
   public void loadLight(Light light) {
-    loadVector3f(locationLightPosition, light.getPosition());
+    loadVector3f(locationLightDirection, light.getDirection());
     loadVector3f(locationLightColour, light.getColor());
+    loadFloat(locationLightIntensity, light.getIntensity());
   }
 
   public void loadShine(float damper, float reflectivity) {
