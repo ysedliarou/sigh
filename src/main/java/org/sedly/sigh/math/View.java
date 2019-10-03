@@ -71,26 +71,26 @@ public class View {
         .up(up);
   }
 
-  private Matrix4f translation() {
+  private static Matrix4f translation(Vector3f position) {
     return Transformation.builder()
-        .setTranslation(position.negate()) // TODO check
+        .setTranslation(position.negate())
         .build()
         .transformation();
   }
 
-  public Matrix4f view() {
-    Matrix4f translation = translation();
+  private static Matrix4f rotation(Vector3f forward, Vector3f up) {
+    Vector3f right = forward.cross(up).normalize();
 
-    Vector3f right = up.cross(forward).normalize(); // TODO check
-
-    Matrix4f rotation = new Matrix4f(new float[][] {
+    return new Matrix4f(new float[][] {
         {right.getX(),     right.getY(),     right.getZ(),     0},
         {up.getX(),        up.getY(),        up.getZ(),        0},
         {forward.getX(),   forward.getY(),   forward.getZ(),   0},
         {0,                0,                0,                1}
     });
+  }
 
-    return rotation.mult(translation);
+  public Matrix4f view() {
+    return rotation(forward, up).mult(translation(position));
   }
 
 }

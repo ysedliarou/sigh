@@ -1,14 +1,12 @@
 package org.sedly.sigh;
 
-import java.util.Vector;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
-import org.sedly.sigh.math.Projection;
-import org.sedly.sigh.math.Quaternion;
+import org.sedly.sigh.math.PerspectiveProjection;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.View;
@@ -176,20 +174,18 @@ public class Runner {
     float t = 0;
 
 
-    // TODO Rotate 180 to see model
-
     // Run the rendering loop until the user has attempted to close
     // the window or has pressed the ESCAPE key.
     while (!glfwWindowShouldClose(window)) {
       glfwSwapBuffers(window); // swap the color buffers
 
       Matrix4f tr = Transformation.builder()
-          .setTranslation(new Vector3f(0, 0, 0))
+          // .setTranslation(new Vector3f(0, 0, 20))
           // .setScaling(new Vector3f(0.1f,0.1f,0.1f))
-          .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
+          // .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
           .build().transformation();
 
-      Matrix4f pr = Projection.builder().xy(WIDTH, HEIGHT).build().projection();
+      Matrix4f pr = PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
 
       Vector3f baseColor = new Vector3f(1, 1, 1);
       Vector3f ambientLight = new Vector3f(0.06f, 0.06f, 0.06f);

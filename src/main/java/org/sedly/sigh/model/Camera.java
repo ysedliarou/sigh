@@ -11,6 +11,12 @@ public class Camera {
   private Vector3f up;
 
   public Camera() {
+    // from negative x to positive x
+    // this(new Vector3f(-20, 0, 0),
+    //     Vector3f.UNIT_X,
+    //     Vector3f.UNIT_Y);
+
+    // from positive z to negative z
     this(new Vector3f(0, 0, 20),
         Vector3f.UNIT_Z.negate(),
         Vector3f.UNIT_Y);
