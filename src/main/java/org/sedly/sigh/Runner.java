@@ -5,6 +5,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.PerspectiveProjection;
 import org.sedly.sigh.math.Quaternion;
@@ -91,19 +92,19 @@ public class Runner {
       }
 
       if (key == GLFW.GLFW_KEY_W && action == GLFW.GLFW_PRESS) {
-        camera.move(Vector3f.UNIT_Z, 2);
+        camera.move(camera.getForward(), 2);
         System.out.println("W");
       }
       if (key == GLFW.GLFW_KEY_S && action == GLFW.GLFW_PRESS) {
-        camera.move(Vector3f.UNIT_Z, -2);
+        camera.move(camera.getForward(), -2);
         System.out.println("S");
       }
       if (key == GLFW.GLFW_KEY_A && action == GLFW.GLFW_PRESS) {
-        camera.move(Vector3f.UNIT_X, 2);
+        camera.move(camera.getForward().cross(camera.getUp()).normalize(), -2);
         System.out.println("A");
       }
       if (key == GLFW.GLFW_KEY_D && action == GLFW.GLFW_PRESS) {
-        camera.move(Vector3f.UNIT_X, -2);
+        camera.move(camera.getForward().cross(camera.getUp()).normalize(), 2);
         System.out.println("D");
       }
 
@@ -159,11 +160,10 @@ public class Runner {
     Loader loader = new Loader();
 
     PhongShader shader = new PhongShader();
-    // StaticShader shader = new StaticShader();
 
-    Model model = ObjLoader.loadObjModel("bunny.obj");
+    Model model = ObjLoader.loadObjModel("dragon.obj");
 
-    Texture texture = loader.texture("white.png");
+    Texture texture = loader.texture("stall.png");
 
     Mesh mesh = loader.create(model);
 
@@ -180,18 +180,18 @@ public class Runner {
       glfwSwapBuffers(window); // swap the color buffers
 
       Matrix4f tr = Transformation.builder()
-          .setTranslation(new Vector3f(0, t, 0))
-          .setScaling(new Vector3f(8f,8f,8f))
+          // .setTranslation(new Vector3f(0, -4, 0))
+          // .setScaling(new Vector3f(8f,8f,8f))
           .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
           .build().transformation();
 
 
       Matrix4f pr = PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
 
-      Vector3f baseColor = new Vector3f(1, 1, 1);
+      Color baseColor = Color.WHITE;
       Vector3f ambientLight = Vector3f.ZERO;
-      BaseLight baseLight = new BaseLight(new Vector3f(1f,1f,1f), 1f);
-      DirectionalLight directionalLight = new DirectionalLight(baseLight, new Vector3f(1, 0,0));
+      BaseLight baseLight = new BaseLight(Color.WHITE, 0.8f);
+      DirectionalLight directionalLight = new DirectionalLight(baseLight, new Vector3f(1, 1,1));
 
       SpecularReflection specularReflection = new SpecularReflection(1f, 150f);
 
@@ -211,13 +211,10 @@ public class Runner {
 
       shader.loadEyePos(camera.getPosition());
 
-      // shader.loadShine(150, 1);
-      // shader.loadLight(new Light(new Vector3f(0,0,-1), new Vector3f(1,1,1), 1));
-
       renderer.render(texturedMesh);
       shader.stop();
 
-      angleModel += 0.004;
+      angleModel += 0.0004;
 
       t-=0.002;
 

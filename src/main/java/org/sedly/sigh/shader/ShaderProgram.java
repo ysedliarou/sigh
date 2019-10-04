@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
+import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
 
@@ -67,6 +68,10 @@ public abstract class ShaderProgram {
 
   public void loadVector3f(int location, Vector3f value) {
     GL20.glUniform3f(location, value.getX(), value.getY(), value.getZ());
+  }
+
+  public void loadColor(int location, Color color) {
+    GL20.glUniform4f(location, color.getR(), color.getG(), color.getB(), color.getA());
   }
 
   public void loadMatrix4f(int location, Matrix4f value) {

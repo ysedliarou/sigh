@@ -6,7 +6,7 @@ in vec3 normal;
 
 out vec3 surfaceNormal;
 out vec2 texCoord0;
-out vec3 color0;
+out vec4 color0;
 
 out vec3 wPosition;
 
@@ -27,6 +27,6 @@ void main(void) {
     surfaceNormal = (transformationMatrix * vec4(normal, 0)).xyz;
 
     wPosition = worldPosition.xyz;
-    color0 = vec3(p(position.x, position.y), p(position.y, position.z), p(position.z, position.x));
+    color0 = vec4(p(position.x, position.y), p(position.y, position.z), p(position.z, position.x), 1);
 
 }

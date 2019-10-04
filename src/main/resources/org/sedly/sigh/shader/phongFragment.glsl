@@ -2,14 +2,14 @@
 
 in vec2 texCoord0;
 in vec3 surfaceNormal;
-in vec3 color0;
+in vec4 color0;
 
 in vec3 wPosition;
 
 out vec4 fragColor;
 
 struct BaseLight {
-    vec3 color;
+    vec4 color;
     float intensity;
 };
 
@@ -23,7 +23,7 @@ struct SpecularReflection {
     float power;
 };
 
-uniform vec3 baseColor;
+uniform vec4 baseColor;
 uniform vec3 ambientLight;
 uniform sampler2D sampler;
 
@@ -40,7 +40,7 @@ vec4 calcLight(BaseLight baseLight, vec3 direction, vec3 normal) {
     float diffuseFactor = max(dot(normal, -direction), 0);
 
     if (diffuseFactor > 0) {
-        diffuseColor = vec4(baseLight.color, 1) * baseLight.intensity * diffuseFactor;
+        diffuseColor = baseLight.color * baseLight.intensity * diffuseFactor;
 
         vec3 dirToEye = normalize(eyePos - wPosition);
 
@@ -50,7 +50,7 @@ vec4 calcLight(BaseLight baseLight, vec3 direction, vec3 normal) {
         specularFactor = pow(specularFactor, specularReflection.power);
 
         if (specularFactor > 0) {
-            specularColor = vec4(baseLight.color, 1) * specularReflection.intensity * specularFactor;
+            specularColor = baseLight.color * specularReflection.intensity * specularFactor;
         }
 
     }
@@ -65,7 +65,7 @@ vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 normal) {
 void main(void) {
 
     vec4 totalLight = vec4(ambientLight, 1);
-    vec4 color = vec4(color0, 1);//vec4(baseColor, 1);
+    vec4 color = color0;
     vec4 textureColor = texture(sampler, texCoord0);
 
     if (textureColor != vec4(0,0,0,0)) {

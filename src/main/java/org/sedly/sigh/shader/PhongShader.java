@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.shader.light.DirectionalLight;
@@ -77,8 +78,8 @@ public class PhongShader extends ShaderProgram {
     loadMatrix4f(locations.get(VIEW_MATRIX), matrix4f);
   }
 
-  public void loadBaseColor(Vector3f vector3f) {
-    loadVector3f(locations.get(BASE_COLOR), vector3f);
+  public void loadBaseColor(Color color) {
+    loadColor(locations.get(BASE_COLOR), color);
   }
 
   public void loadAmbientLight(Vector3f vector3f) {
@@ -86,7 +87,7 @@ public class PhongShader extends ShaderProgram {
   }
 
   public void loadDirectionalLight(DirectionalLight directionalLight) {
-    loadVector3f(locations.get(DIRECTIONAL_BASE_COLOR), directionalLight.getBaseLight().getColor());
+    loadColor(locations.get(DIRECTIONAL_BASE_COLOR), directionalLight.getBaseLight().getColor());
     loadFloat(locations.get(DIRECTIONAL_BASE_INTENSITY), directionalLight.getBaseLight().getIntensity());
     loadVector3f(locations.get(DIRECTIONAL_DIRECTION), directionalLight.getDirection());
   }
