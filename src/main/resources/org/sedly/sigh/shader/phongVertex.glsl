@@ -6,13 +6,17 @@ in vec3 normal;
 
 out vec3 surfaceNormal;
 out vec2 texCoord0;
+out vec3 color0;
 
-out vec3 toCameraDirection;
 out vec3 wPosition;
 
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
+
+float p(float a, float b) {
+    return cos(clamp((a-b) / (a + b), 0.1, 0.9)) * 0.5;
+}
 
 void main(void) {
 
@@ -20,8 +24,9 @@ void main(void) {
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
 
     texCoord0 = texCoord;
-    surfaceNormal = (transformationMatrix * vec4(normal, 1)).xyz;
+    surfaceNormal = (transformationMatrix * vec4(normal, 0)).xyz;
 
     wPosition = worldPosition.xyz;
-    toCameraDirection = (inverse(viewMatrix) * vec4(0, 0, 0, 1)).xyz - worldPosition.xyz;
+    color0 = vec3(p(position.x, position.y), p(position.y, position.z), p(position.z, position.x));
+
 }

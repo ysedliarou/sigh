@@ -30,6 +30,8 @@ public class PhongShader extends ShaderProgram {
   public static final String SPECULAR_INTENSITY = "specularReflection.intensity";
   public static final String SPECULAR_POWER = "specularReflection.power";
 
+  public static final String EYE_POS = "eyePos";
+
   private Map<String, Integer> locations = new HashMap<>();
 
   public PhongShader() {
@@ -46,7 +48,8 @@ public class PhongShader extends ShaderProgram {
       DIRECTIONAL_BASE_INTENSITY,
       DIRECTIONAL_DIRECTION,
       SPECULAR_INTENSITY,
-      SPECULAR_POWER);
+      SPECULAR_POWER,
+      EYE_POS);
 
   @Override
   protected void bind() {
@@ -91,6 +94,10 @@ public class PhongShader extends ShaderProgram {
   public void loadSpecularReflection(SpecularReflection specularReflection) {
     loadFloat(locations.get(SPECULAR_INTENSITY), specularReflection.getIntensity());
     loadFloat(locations.get(SPECULAR_POWER), specularReflection.getPower());
+  }
+
+  public void loadEyePos(Vector3f vector3f) {
+    loadVector3f(locations.get(EYE_POS), vector3f);
   }
 
 }

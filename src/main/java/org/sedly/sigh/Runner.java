@@ -7,6 +7,7 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.PerspectiveProjection;
+import org.sedly.sigh.math.Quaternion;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.View;
@@ -33,9 +34,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Runner {
 
   private static final int WIDTH = 800;
-
   private static final int HEIGHT = 600;
-  // The window handle
+
   private long window;
 
   public void run() {
@@ -158,10 +158,10 @@ public class Runner {
     Renderer renderer = new Renderer();
     Loader loader = new Loader();
 
-    // PhongShader shader = new PhongShader();
-    StaticShader shader = new StaticShader();
+    PhongShader shader = new PhongShader();
+    // StaticShader shader = new StaticShader();
 
-    Model model = ObjLoader.loadObjModel("dragon.obj");
+    Model model = ObjLoader.loadObjModel("bunny.obj");
 
     Texture texture = loader.texture("white.png");
 
@@ -169,28 +169,29 @@ public class Runner {
 
     TexturedMesh texturedMesh = new TexturedMesh(mesh, texture);
 
-    float angleModel = 0.001f;
+    float angleModel = 0.04f;
     float angleLight = 0.04f;
+
+
     float t = 0;
-
-
     // Run the rendering loop until the user has attempted to close
     // the window or has pressed the ESCAPE key.
     while (!glfwWindowShouldClose(window)) {
       glfwSwapBuffers(window); // swap the color buffers
 
       Matrix4f tr = Transformation.builder()
-          // .setTranslation(new Vector3f(0, 0, 20))
-          // .setScaling(new Vector3f(0.1f,0.1f,0.1f))
-          // .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
+          .setTranslation(new Vector3f(0, t, 0))
+          .setScaling(new Vector3f(8f,8f,8f))
+          .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
           .build().transformation();
+
 
       Matrix4f pr = PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
 
       Vector3f baseColor = new Vector3f(1, 1, 1);
-      Vector3f ambientLight = new Vector3f(0.06f, 0.06f, 0.06f);
+      Vector3f ambientLight = Vector3f.ZERO;
       BaseLight baseLight = new BaseLight(new Vector3f(1f,1f,1f), 1f);
-      DirectionalLight directionalLight = new DirectionalLight(baseLight, new Vector3f(0,0,-20));
+      DirectionalLight directionalLight = new DirectionalLight(baseLight, new Vector3f(1, 0,0));
 
       SpecularReflection specularReflection = new SpecularReflection(1f, 150f);
 
@@ -203,18 +204,22 @@ public class Runner {
       shader.loadProjectionMatrix(pr);
       shader.loadViewMatrix(view());
 
-      // shader.loadBaseColor(baseColor);
-      // shader.loadAmbientLight(ambientLight);
-      // shader.loadDirectionalLight(directionalLight);
-      // shader.loadSpecularReflection(specularReflection);
+      shader.loadBaseColor(baseColor);
+      shader.loadAmbientLight(ambientLight);
+      shader.loadDirectionalLight(directionalLight);
+      shader.loadSpecularReflection(specularReflection);
 
-      shader.loadShine(150, 1);
-      shader.loadLight(new Light(new Vector3f(0,0,-20), new Vector3f(1,1,1), 1));
+      shader.loadEyePos(camera.getPosition());
+
+      // shader.loadShine(150, 1);
+      // shader.loadLight(new Light(new Vector3f(0,0,-1), new Vector3f(1,1,1), 1));
 
       renderer.render(texturedMesh);
       shader.stop();
 
-      angleModel -= 0.004;
+      angleModel += 0.004;
+
+      t-=0.002;
 
       // Poll for window events. The key callback above will only be
       // invoked during this call.

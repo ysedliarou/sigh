@@ -33,7 +33,7 @@ void main(void) {
 
 
 
-    out_Colour = vec4(diffuse, 1.0) * vec4(colour, 0.0) + vec4(finalSpecular, 1.0);
+    out_Colour = vec4(diffuse, 1.0) * vec4(colour, 1.0) + vec4(finalSpecular, 1.0);
 //    out_Colour = vec4(diffuse, 1.0) * texture(texSampler, pass_texCoord) + vec4(finalSpecular, 1.0);
 //    out_Colour = vec4(colour, 1.0);
 }
