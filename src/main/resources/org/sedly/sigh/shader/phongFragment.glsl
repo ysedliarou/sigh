@@ -1,7 +1,7 @@
 #version 140
 
 const int MAX_POINT_LIGHTS = 2;
-
+const int MAX_SPOT_LIGHTS = 2;
 
 in vec2 texCoord0;
 in vec3 surfaceNormal;
@@ -55,6 +55,7 @@ uniform DirectionalLight directionalLight;
 uniform SpecularReflection specularReflection;
 
 uniform PointLight[MAX_POINT_LIGHTS] pointLights;
+uniform SpotLight[MAX_SPOT_LIGHTS] spotLights;
 
 vec4 calcLight(BaseLight baseLight, vec3 direction, vec3 normal) {
 
@@ -91,9 +92,9 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal) {
     float distanceToPoint = length(lightDirection);
     lightDirection = normalize(lightDirection);
 
-    if (distanceToPoint > pointLight.range) {
-        return vec4(0,0,0,0);
-    }
+//    if (distanceToPoint > pointLight.range) {
+//        return vec4(0,0,0,0);
+//    }
 
     vec4 color = calcLight(pointLight.baseLight, lightDirection, normal);
 
@@ -103,6 +104,21 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal) {
             + 0.0001;
 
     return color / attenuation;
+}
+
+vec4 calcSpotLight(SpotLight spotLight, vec3 normal) {
+
+    vec3 lightDirection = normalize(wPosition - spotLight.pointLight.position);
+    float spotFactor = dot(lightDirection, spotLight.direction);
+
+    vec4 color = vec4(0,0,0,0);
+
+    if (spotFactor > spotLight.cutoff) {
+        color = calcPointLight(spotLight.pointLight, normal)
+                * (1.0 - (1.0 - spotFactor) / (1.0 - spotLight.cutoff));
+    }
+
+    return color;
 }
 
 void main(void) {
@@ -123,6 +139,12 @@ void main(void) {
         if (pointLights[i].baseLight.intensity > 0) {
             totalLight += calcPointLight(pointLights[i], normal);
         }
+    }
+
+    for (int i = 0; i < MAX_SPOT_LIGHTS; i++) {
+//        if (spotLights[i].pointLight.baseLight.intensity > 0) {
+            totalLight += calcSpotLight(spotLights[i], normal);
+//        }
     }
 
     fragColor = color * totalLight;

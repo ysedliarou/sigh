@@ -14,6 +14,7 @@ import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.shader.light.DirectionalLight;
 import org.sedly.sigh.shader.light.PointLight;
 import org.sedly.sigh.shader.light.SpecularReflection;
+import org.sedly.sigh.shader.light.SpotLight;
 
 public class PhongShader extends ShaderProgram {
 
@@ -43,6 +44,8 @@ public class PhongShader extends ShaderProgram {
   }
 
   public static final int MAX_POINT_LIGHTS = 2;
+
+  public static final int MAX_SPOT_LIGHTS = 2;
 
   private List<String> uniforms = Lists.newArrayList(
       TRANSFORMATION_MATRIX,
@@ -74,8 +77,14 @@ public class PhongShader extends ShaderProgram {
         .flatMap(i -> getPointLightName(i).stream())
         .collect(Collectors.toMap(Function.identity(), this::getUniformLocation));
 
+    Map<String, Integer> spotLights = IntStream.range(0, MAX_SPOT_LIGHTS)
+        .boxed()
+        .flatMap(i -> getSpotLightName(i).stream())
+        .collect(Collectors.toMap(Function.identity(), this::getUniformLocation));
+
     this.locations.putAll(locations);
     this.locations.putAll(pointLights);
+    this.locations.putAll(spotLights);
   }
 
   private List<String> getPointLightName(int i) {
@@ -87,6 +96,20 @@ public class PhongShader extends ShaderProgram {
     names.add("pointLights[" + i + "].attenuation.exponent");
     names.add("pointLights[" + i + "].position");
     names.add("pointLights[" + i + "].range");
+    return names;
+  }
+
+  private List<String> getSpotLightName(int i) {
+    List<String> names = new ArrayList<>();
+    names.add("spotLights[" + i + "].pointLight.baseLight.color");
+    names.add("spotLights[" + i + "].pointLight.baseLight.intensity");
+    names.add("spotLights[" + i + "].pointLight.attenuation.constant");
+    names.add("spotLights[" + i + "].pointLight.attenuation.linear");
+    names.add("spotLights[" + i + "].pointLight.attenuation.exponent");
+    names.add("spotLights[" + i + "].pointLight.position");
+    names.add("spotLights[" + i + "].pointLight.range");
+    names.add("spotLights[" + i + "].direction");
+    names.add("spotLights[" + i + "].cutoff");
     return names;
   }
 
@@ -132,6 +155,17 @@ public class PhongShader extends ShaderProgram {
     loadFloat(locations.get("pointLights[" + i + "].attenuation.exponent"), pointLight.getAttenuation().getExponent());
     loadVector3f(locations.get("pointLights[" + i + "].position"), pointLight.getPosition());
     loadFloat(locations.get("pointLights[" + i + "].range"), pointLight.getRange());
+  }
+
+  public void loadSpotLight(SpotLight spotLight, int i) {
+    loadColor(locations.get("spotLights[" + i + "].pointLight.baseLight.color"), spotLight.getPointLight().getBaseLight().getColor());
+    loadFloat(locations.get("spotLights[" + i + "].pointLight.baseLight.intensity"), spotLight.getPointLight().getBaseLight().getIntensity());
+    loadFloat(locations.get("spotLights[" + i + "].pointLight.attenuation.constant"), spotLight.getPointLight().getAttenuation().getConstant());
+    loadFloat(locations.get("spotLights[" + i + "].pointLight.attenuation.linear"), spotLight.getPointLight().getAttenuation().getLinear());
+    loadFloat(locations.get("spotLights[" + i + "].pointLight.attenuation.exponent"), spotLight.getPointLight().getAttenuation().getExponent());
+    loadVector3f(locations.get("spotLights[" + i + "].pointLight.position"), spotLight.getPointLight().getPosition());
+    loadVector3f(locations.get("spotLights[" + i + "].direction"), spotLight.getDirection());
+    loadFloat(locations.get("spotLights[" + i + "].cutoff"), spotLight.getCutoff());
   }
 
   public void loadSpecularReflection(SpecularReflection specularReflection) {

@@ -30,6 +30,7 @@ import org.sedly.sigh.model.Texture;
 import org.sedly.sigh.model.TexturedMesh;
 import org.sedly.sigh.shader.light.PointLight;
 import org.sedly.sigh.shader.light.SpecularReflection;
+import org.sedly.sigh.shader.light.SpotLight;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -206,10 +207,16 @@ public class Runner {
       );
 
       PointLight pointLight1 = new PointLight(
-          new BaseLight(Color.GREEN, 1f),
+          new BaseLight(Color.GREEN, 5f),
           new Attenuation(0, 0, 1),
-          new Vector3f(0, 2, 0),
+          new Vector3f(0, 0, 2),
           3
+      );
+
+      SpotLight spotLight = new SpotLight(
+          pointLight1,
+          new Vector3f(0, 0, -1),
+          0.95f
       );
 
       renderer.prepare();
@@ -221,9 +228,10 @@ public class Runner {
 
       shader.loadBaseColor(Color.WHITE);
       shader.loadAmbientLight(Vector3f.ZERO);
-      shader.loadDirectionalLight(directionalLight);
-      shader.loadPointLight(pointLight0, 0);
-      shader.loadPointLight(pointLight1, 1);
+      // shader.loadDirectionalLight(directionalLight);
+      // shader.loadPointLight(pointLight0, 0);
+      // shader.loadPointLight(pointLight1, 1);
+      shader.loadSpotLight(spotLight, 0);
 
       shader.loadSpecularReflection(new SpecularReflection(1f, 150f));
 
