@@ -1,5 +1,8 @@
 #version 140
 
+const int MAX_POINT_LIGHTS = 2;
+
+
 in vec2 texCoord0;
 in vec3 surfaceNormal;
 in vec4 color0;
@@ -23,6 +26,25 @@ struct SpecularReflection {
     float power;
 };
 
+struct Attenuation {
+    float constant;
+    float linear;
+    float exponent;
+};
+
+struct PointLight {
+    BaseLight baseLight;
+    Attenuation attenuation;
+    vec3 position;
+    float range;
+};
+
+struct SpotLight {
+    PointLight pointLight;
+    vec3 direction;
+    float cutoff;
+};
+
 uniform vec4 baseColor;
 uniform vec3 ambientLight;
 uniform sampler2D sampler;
@@ -31,6 +53,8 @@ uniform vec3 eyePos;
 
 uniform DirectionalLight directionalLight;
 uniform SpecularReflection specularReflection;
+
+uniform PointLight[MAX_POINT_LIGHTS] pointLights;
 
 vec4 calcLight(BaseLight baseLight, vec3 direction, vec3 normal) {
 
@@ -52,7 +76,6 @@ vec4 calcLight(BaseLight baseLight, vec3 direction, vec3 normal) {
         if (specularFactor > 0) {
             specularColor = baseLight.color * specularReflection.intensity * specularFactor;
         }
-
     }
 
     return diffuseColor + specularColor;
@@ -60,6 +83,26 @@ vec4 calcLight(BaseLight baseLight, vec3 direction, vec3 normal) {
 
 vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 normal) {
     return calcLight(directionalLight.baseLight, -directionalLight.direction, normal);
+}
+
+vec4 calcPointLight(PointLight pointLight, vec3 normal) {
+
+    vec3 lightDirection = wPosition - pointLight.position;
+    float distanceToPoint = length(lightDirection);
+    lightDirection = normalize(lightDirection);
+
+    if (distanceToPoint > pointLight.range) {
+        return vec4(0,0,0,0);
+    }
+
+    vec4 color = calcLight(pointLight.baseLight, lightDirection, normal);
+
+    float attenuation = pointLight.attenuation.constant
+            + pointLight.attenuation.linear * distanceToPoint
+            + pointLight.attenuation.exponent * distanceToPoint * distanceToPoint
+            + 0.0001;
+
+    return color / attenuation;
 }
 
 void main(void) {
@@ -75,6 +118,12 @@ void main(void) {
     vec3 normal = normalize(surfaceNormal);
 
     totalLight += calcDirectionalLight(directionalLight, normal);
+
+    for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
+        if (pointLights[i].baseLight.intensity > 0) {
+            totalLight += calcPointLight(pointLights[i], normal);
+        }
+    }
 
     fragColor = color * totalLight;
 

@@ -1,5 +1,7 @@
 package org.sedly.sigh;
 
+import com.google.common.collect.Lists;
+import java.util.List;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -15,6 +17,7 @@ import org.sedly.sigh.math.View;
 import org.sedly.sigh.model.Camera;
 import org.sedly.sigh.shader.PhongShader;
 import org.sedly.sigh.shader.StaticShader;
+import org.sedly.sigh.shader.light.Attenuation;
 import org.sedly.sigh.shader.light.BaseLight;
 import org.sedly.sigh.shader.light.DirectionalLight;
 import org.sedly.sigh.shader.light.Light;
@@ -25,6 +28,7 @@ import org.sedly.sigh.model.ObjLoader;
 import org.sedly.sigh.model.Renderer;
 import org.sedly.sigh.model.Texture;
 import org.sedly.sigh.model.TexturedMesh;
+import org.sedly.sigh.shader.light.PointLight;
 import org.sedly.sigh.shader.light.SpecularReflection;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -160,8 +164,9 @@ public class Runner {
     Loader loader = new Loader();
 
     PhongShader shader = new PhongShader();
+    shader.init();
 
-    Model model = ObjLoader.loadObjModel("dragon.obj");
+    Model model = ObjLoader.loadObjModel("bunny.obj");
 
     Texture texture = loader.texture("stall.png");
 
@@ -188,33 +193,46 @@ public class Runner {
 
       Matrix4f pr = PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
 
-      Color baseColor = Color.WHITE;
-      Vector3f ambientLight = Vector3f.ZERO;
-      BaseLight baseLight = new BaseLight(Color.WHITE, 0.8f);
-      DirectionalLight directionalLight = new DirectionalLight(baseLight, new Vector3f(1, 1,1));
+      DirectionalLight directionalLight = new DirectionalLight(
+          new BaseLight(Color.WHITE, 0.4f),
+          new Vector3f(0, 0,1)
+      );
 
-      SpecularReflection specularReflection = new SpecularReflection(1f, 150f);
+      PointLight pointLight0 = new PointLight(
+          new BaseLight(Color.RED, 1f),
+          new Attenuation(0, 0, 1),
+          new Vector3f(-1, 1, 0),
+          3
+      );
+
+      PointLight pointLight1 = new PointLight(
+          new BaseLight(Color.GREEN, 1f),
+          new Attenuation(0, 0, 1),
+          new Vector3f(0, 2, 0),
+          3
+      );
 
       renderer.prepare();
-
-      shader.init();
       shader.start();
 
       shader.loadTransformationMatrix(tr);
       shader.loadProjectionMatrix(pr);
       shader.loadViewMatrix(view());
 
-      shader.loadBaseColor(baseColor);
-      shader.loadAmbientLight(ambientLight);
+      shader.loadBaseColor(Color.WHITE);
+      shader.loadAmbientLight(Vector3f.ZERO);
       shader.loadDirectionalLight(directionalLight);
-      shader.loadSpecularReflection(specularReflection);
+      shader.loadPointLight(pointLight0, 0);
+      shader.loadPointLight(pointLight1, 1);
+
+      shader.loadSpecularReflection(new SpecularReflection(1f, 150f));
 
       shader.loadEyePos(camera.getPosition());
 
       renderer.render(texturedMesh);
       shader.stop();
 
-      angleModel += 0.0004;
+      angleModel += 0.004;
 
       t-=0.002;
 

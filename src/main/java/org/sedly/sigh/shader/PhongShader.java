@@ -1,15 +1,18 @@
 package org.sedly.sigh.shader;
 
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.shader.light.DirectionalLight;
+import org.sedly.sigh.shader.light.PointLight;
 import org.sedly.sigh.shader.light.SpecularReflection;
 
 public class PhongShader extends ShaderProgram {
@@ -39,6 +42,8 @@ public class PhongShader extends ShaderProgram {
     super(VS, FS);
   }
 
+  public static final int MAX_POINT_LIGHTS = 2;
+
   private List<String> uniforms = Lists.newArrayList(
       TRANSFORMATION_MATRIX,
       PROJECTION_MATRIX,
@@ -63,7 +68,26 @@ public class PhongShader extends ShaderProgram {
   protected void initUniformLocations() {
     Map<String, Integer> locations = uniforms.stream()
         .collect(Collectors.toMap(Function.identity(), this::getUniformLocation));
+
+    Map<String, Integer> pointLights = IntStream.range(0, MAX_POINT_LIGHTS)
+        .boxed()
+        .flatMap(i -> getPointLightName(i).stream())
+        .collect(Collectors.toMap(Function.identity(), this::getUniformLocation));
+
     this.locations.putAll(locations);
+    this.locations.putAll(pointLights);
+  }
+
+  private List<String> getPointLightName(int i) {
+    List<String> names = new ArrayList<>();
+    names.add("pointLights[" + i + "].baseLight.color");
+    names.add("pointLights[" + i + "].baseLight.intensity");
+    names.add("pointLights[" + i + "].attenuation.constant");
+    names.add("pointLights[" + i + "].attenuation.linear");
+    names.add("pointLights[" + i + "].attenuation.exponent");
+    names.add("pointLights[" + i + "].position");
+    names.add("pointLights[" + i + "].range");
+    return names;
   }
 
   public void loadTransformationMatrix(Matrix4f matrix4f) {
@@ -90,6 +114,24 @@ public class PhongShader extends ShaderProgram {
     loadColor(locations.get(DIRECTIONAL_BASE_COLOR), directionalLight.getBaseLight().getColor());
     loadFloat(locations.get(DIRECTIONAL_BASE_INTENSITY), directionalLight.getBaseLight().getIntensity());
     loadVector3f(locations.get(DIRECTIONAL_DIRECTION), directionalLight.getDirection());
+  }
+
+  public void loadPointLights(List<PointLight> pointLights) {
+    int i = 0;
+    for (PointLight pointLight : pointLights) {
+      loadPointLight(pointLight, i);
+      i++;
+    }
+  }
+
+  public void loadPointLight(PointLight pointLight, int i) {
+    loadColor(locations.get("pointLights[" + i + "].baseLight.color"), pointLight.getBaseLight().getColor());
+    loadFloat(locations.get("pointLights[" + i + "].baseLight.intensity"), pointLight.getBaseLight().getIntensity());
+    loadFloat(locations.get("pointLights[" + i + "].attenuation.constant"), pointLight.getAttenuation().getConstant());
+    loadFloat(locations.get("pointLights[" + i + "].attenuation.linear"), pointLight.getAttenuation().getLinear());
+    loadFloat(locations.get("pointLights[" + i + "].attenuation.exponent"), pointLight.getAttenuation().getExponent());
+    loadVector3f(locations.get("pointLights[" + i + "].position"), pointLight.getPosition());
+    loadFloat(locations.get("pointLights[" + i + "].range"), pointLight.getRange());
   }
 
   public void loadSpecularReflection(SpecularReflection specularReflection) {
