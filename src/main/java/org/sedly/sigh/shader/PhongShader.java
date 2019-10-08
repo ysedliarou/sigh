@@ -164,6 +164,7 @@ public class PhongShader extends ShaderProgram {
     loadFloat(locations.get("spotLights[" + i + "].pointLight.attenuation.linear"), spotLight.getPointLight().getAttenuation().getLinear());
     loadFloat(locations.get("spotLights[" + i + "].pointLight.attenuation.exponent"), spotLight.getPointLight().getAttenuation().getExponent());
     loadVector3f(locations.get("spotLights[" + i + "].pointLight.position"), spotLight.getPointLight().getPosition());
+    loadFloat(locations.get("spotLights[" + i + "].pointLight.range"), spotLight.getPointLight().getRange());
     loadVector3f(locations.get("spotLights[" + i + "].direction"), spotLight.getDirection());
     loadFloat(locations.get("spotLights[" + i + "].cutoff"), spotLight.getCutoff());
   }

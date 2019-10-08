@@ -167,7 +167,7 @@ public class Runner {
     PhongShader shader = new PhongShader();
     shader.init();
 
-    Model model = ObjLoader.loadObjModel("bunny.obj");
+    Model model = ObjLoader.loadObjModel("dragon.obj");
 
     Texture texture = loader.texture("stall.png");
 
@@ -180,14 +180,15 @@ public class Runner {
 
 
     float t = 0;
+    float s = 8;
     // Run the rendering loop until the user has attempted to close
     // the window or has pressed the ESCAPE key.
     while (!glfwWindowShouldClose(window)) {
       glfwSwapBuffers(window); // swap the color buffers
 
       Matrix4f tr = Transformation.builder()
-          // .setTranslation(new Vector3f(0, -4, 0))
-          // .setScaling(new Vector3f(8f,8f,8f))
+          // .setTranslation(new Vector3f(2, 0, 0))
+          .setScaling(new Vector3f(1,1,1).scale(1))
           .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
           .build().transformation();
 
@@ -201,22 +202,29 @@ public class Runner {
 
       PointLight pointLight0 = new PointLight(
           new BaseLight(Color.RED, 1f),
-          new Attenuation(0, 0, 1),
-          new Vector3f(-1, 1, 0),
-          3
+          new Attenuation(0.021f, 0.01f, 0.01f),
+          new Vector3f(-8, 14, 5),
+          30
       );
 
       PointLight pointLight1 = new PointLight(
-          new BaseLight(Color.GREEN, 5f),
-          new Attenuation(0, 0, 1),
-          new Vector3f(0, 0, 2),
-          3
+          new BaseLight(Color.BLUE, 1f),
+          new Attenuation(0.021f, 0.01f, 0.01f),
+          new Vector3f(10, 0, 5),
+          30
+      );
+
+      PointLight pointLight = new PointLight(
+          new BaseLight(Color.GREEN, 1f),
+          new Attenuation(0.001f, 0.01f, 0.01f),
+          new Vector3f(0, 4f, 12),
+          30
       );
 
       SpotLight spotLight = new SpotLight(
-          pointLight1,
+          pointLight,
           new Vector3f(0, 0, -1),
-          0.95f
+          0.98f
       );
 
       renderer.prepare();
@@ -228,9 +236,9 @@ public class Runner {
 
       shader.loadBaseColor(Color.WHITE);
       shader.loadAmbientLight(Vector3f.ZERO);
-      // shader.loadDirectionalLight(directionalLight);
-      // shader.loadPointLight(pointLight0, 0);
-      // shader.loadPointLight(pointLight1, 1);
+      shader.loadDirectionalLight(directionalLight);
+      shader.loadPointLight(pointLight0, 0);
+      shader.loadPointLight(pointLight1, 1);
       shader.loadSpotLight(spotLight, 0);
 
       shader.loadSpecularReflection(new SpecularReflection(1f, 150f));
@@ -240,7 +248,7 @@ public class Runner {
       renderer.render(texturedMesh);
       shader.stop();
 
-      angleModel += 0.004;
+      angleModel += 0.01;
 
       t-=0.002;
 

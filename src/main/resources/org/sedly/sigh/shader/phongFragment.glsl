@@ -9,8 +9,6 @@ in vec4 color0;
 
 in vec3 wPosition;
 
-out vec4 fragColor;
-
 struct BaseLight {
     vec4 color;
     float intensity;
@@ -90,11 +88,12 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal) {
 
     vec3 lightDirection = wPosition - pointLight.position;
     float distanceToPoint = length(lightDirection);
-    lightDirection = normalize(lightDirection);
 
-//    if (distanceToPoint > pointLight.range) {
-//        return vec4(0,0,0,0);
-//    }
+    if (distanceToPoint > pointLight.range) {
+        return vec4(0,0,0,0);
+    }
+
+    lightDirection = normalize(lightDirection);
 
     vec4 color = calcLight(pointLight.baseLight, lightDirection, normal);
 
@@ -128,7 +127,7 @@ void main(void) {
     vec4 textureColor = texture(sampler, texCoord0);
 
     if (textureColor != vec4(0,0,0,0)) {
-//        color *= textureColor;
+        color *= textureColor;
     }
 
     vec3 normal = normalize(surfaceNormal);
@@ -142,11 +141,10 @@ void main(void) {
     }
 
     for (int i = 0; i < MAX_SPOT_LIGHTS; i++) {
-//        if (spotLights[i].pointLight.baseLight.intensity > 0) {
+        if (spotLights[i].pointLight.baseLight.intensity > 0) {
             totalLight += calcSpotLight(spotLights[i], normal);
-//        }
+        }
     }
 
-    fragColor = color * totalLight;
-
+    gl_FragColor = color * totalLight;
 }
