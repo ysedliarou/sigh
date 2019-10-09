@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.sedly.sigh.util.BufferUtil;
 
 public class Loader {
 
@@ -70,7 +71,7 @@ public class Loader {
     int vboId = GL15.glGenBuffers();
     vbos.add(vboId);
     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, floatBuffer(data), GL15.GL_STATIC_DRAW);
+    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, BufferUtil.floatBuffer(data), GL15.GL_STATIC_DRAW);
     GL20.glVertexAttribPointer(attributeNumber, coordSize , GL11.GL_FLOAT, false, 0, 0);
     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
   }
@@ -79,33 +80,7 @@ public class Loader {
     int vboId = GL15.glGenBuffers();
     vbos.add(vboId);
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboId);
-    GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, intBuffer(indices), GL15.GL_STATIC_DRAW);
-  }
-
-  private IntBuffer intBuffer(int[] data) {
-    ByteBuffer byteBuffer = ByteBuffer.allocateDirect(data.length * 4);
-    byteBuffer.order(ByteOrder.nativeOrder());
-    IntBuffer intBuffer = byteBuffer.asIntBuffer();
-    intBuffer.put(data);
-    intBuffer.flip();
-    return intBuffer;
-  }
-
-  private FloatBuffer floatBuffer(float[] data) {
-    ByteBuffer byteBuffer = ByteBuffer.allocateDirect(data.length * 4);
-    byteBuffer.order(ByteOrder.nativeOrder());
-    FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
-    floatBuffer.put(data);
-    floatBuffer.flip();
-    return floatBuffer;
-  }
-
-  private ByteBuffer byteBuffer(byte[] data) {
-    ByteBuffer byteBuffer = ByteBuffer.allocateDirect(data.length * 4);
-    byteBuffer.order(ByteOrder.nativeOrder());
-    byteBuffer.put(data);
-    byteBuffer.flip();
-    return byteBuffer;
+    GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, BufferUtil.intBuffer(indices), GL15.GL_STATIC_DRAW);
   }
 
   private ByteBuffer byteBuffer(BufferedImage image) {
@@ -123,7 +98,7 @@ public class Loader {
         data[i + 3] = alpha ? (byte) ((pixel >> 24) & 0xFF) : (byte) 0xFF;
       }
     }
-    return byteBuffer(data);
+    return BufferUtil.byteBuffer(data);
   }
 
   private void unbind() {

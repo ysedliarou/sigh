@@ -1,4 +1,4 @@
-package org.sedly.sigh.math;
+package org.sedly.sigh.util;
 
 import java.text.DecimalFormat;
 

@@ -1,9 +1,10 @@
 package org.sedly.sigh.math;
 
 
-import static org.sedly.sigh.math.MathUtil.NUMBER_FORMAT;
+import static org.sedly.sigh.util.MathUtil.NUMBER_FORMAT;
 
 import java.text.MessageFormat;
+import org.sedly.sigh.util.MathUtil;
 
 public class Vector3f {
 

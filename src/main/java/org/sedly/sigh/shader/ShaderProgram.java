@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
+import org.sedly.sigh.util.BufferUtil;
 
 public abstract class ShaderProgram {
 
@@ -70,20 +69,12 @@ public abstract class ShaderProgram {
     GL20.glUniform3f(location, value.getX(), value.getY(), value.getZ());
   }
 
-  public void loadColor(int location, Color color) {
-    GL20.glUniform4f(location, color.getR(), color.getG(), color.getB(), color.getA());
+  public void loadColor(int location, Color value) {
+    GL20.glUniform4f(location, value.getR(), value.getG(), value.getB(), value.getA());
   }
 
   public void loadMatrix4f(int location, Matrix4f value) {
-    FloatBuffer floatBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(16);
-    float[][] matrix = value.getMatrix();
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4 ; j++) {
-        floatBuffer.put(matrix[i][j]);
-      }
-    }
-    floatBuffer.flip();
-    GL20.glUniformMatrix4fv(location, true, floatBuffer);
+    GL20.glUniformMatrix4fv(location, true, BufferUtil.floatBuffer(value));
   }
 
   public void loadInt(int location, int value) {

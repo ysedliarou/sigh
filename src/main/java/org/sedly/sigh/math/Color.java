@@ -1,5 +1,7 @@
 package org.sedly.sigh.math;
 
+import org.sedly.sigh.util.MathUtil;
+
 public class Color {
 
   public static final float MIN = 0.0f;
