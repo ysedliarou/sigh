@@ -11,10 +11,10 @@ import java.util.stream.IntStream;
 import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
-import org.sedly.sigh.shader.light.DirectionalLight;
-import org.sedly.sigh.shader.light.PointLight;
-import org.sedly.sigh.shader.light.SpecularReflection;
-import org.sedly.sigh.shader.light.SpotLight;
+import org.sedly.sigh.light.DirectionalLight;
+import org.sedly.sigh.light.PointLight;
+import org.sedly.sigh.light.SpecularReflection;
+import org.sedly.sigh.light.SpotLight;
 
 public class PhongShader extends ShaderProgram {
 
@@ -43,9 +43,9 @@ public class PhongShader extends ShaderProgram {
     super(VS, FS);
   }
 
-  public static final int MAX_POINT_LIGHTS = 2;
+  public static final int MAX_POINT_LIGHTS = 4;
 
-  public static final int MAX_SPOT_LIGHTS = 2;
+  public static final int MAX_SPOT_LIGHTS = 4;
 
   private List<String> uniforms = Lists.newArrayList(
       TRANSFORMATION_MATRIX,

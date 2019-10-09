@@ -1,4 +1,4 @@
-package org.sedly.sigh.shader.light;
+package org.sedly.sigh.light;
 
 import org.sedly.sigh.math.Color;
 

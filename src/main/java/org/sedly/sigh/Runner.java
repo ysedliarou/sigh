@@ -1,13 +1,10 @@
 package org.sedly.sigh;
 
-import com.google.common.collect.Lists;
-import java.util.List;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.PerspectiveProjection;
 import org.sedly.sigh.math.Quaternion;
@@ -16,11 +13,6 @@ import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.View;
 import org.sedly.sigh.model.Camera;
 import org.sedly.sigh.shader.PhongShader;
-import org.sedly.sigh.shader.StaticShader;
-import org.sedly.sigh.shader.light.Attenuation;
-import org.sedly.sigh.shader.light.BaseLight;
-import org.sedly.sigh.shader.light.DirectionalLight;
-import org.sedly.sigh.shader.light.Light;
 import org.sedly.sigh.model.Loader;
 import org.sedly.sigh.model.Mesh;
 import org.sedly.sigh.model.Model;
@@ -28,14 +20,19 @@ import org.sedly.sigh.model.ObjLoader;
 import org.sedly.sigh.model.Renderer;
 import org.sedly.sigh.model.Texture;
 import org.sedly.sigh.model.TexturedMesh;
-import org.sedly.sigh.shader.light.PointLight;
-import org.sedly.sigh.shader.light.SpecularReflection;
-import org.sedly.sigh.shader.light.SpotLight;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
+import static org.sedly.sigh.Const.AMBIENT_LIGHT;
+import static org.sedly.sigh.Const.BASE_COLOR;
+import static org.sedly.sigh.Const.DIRECTIONAL_LIGHT_0;
+import static org.sedly.sigh.Const.POINT_LIGHT_0;
+import static org.sedly.sigh.Const.POINT_LIGHT_1;
+import static org.sedly.sigh.Const.POINT_LIGHT_2;
+import static org.sedly.sigh.Const.SPECULAR_REFLECTION;
+import static org.sedly.sigh.Const.SPOT_LIGHT_0;
 
 public class Runner {
 
@@ -58,17 +55,7 @@ public class Runner {
     glfwSetErrorCallback(null).free();
   }
 
-  private Camera camera = new Camera();
-
-  public Matrix4f view() {
-    return View.builder()
-        .position(camera.getPosition())
-        .forward(camera.getForward())
-        .up(camera.getUp())
-        .build()
-        .view();
-  }
-
+  private static Camera camera = new Camera();
 
   private void init() {
     // Setup an error callback. The default implementation
@@ -167,90 +154,30 @@ public class Runner {
     PhongShader shader = new PhongShader();
     shader.init();
 
-    Model model = ObjLoader.loadObjModel("dragon.obj");
-
-    Texture texture = loader.texture("stall.png");
-
-    Mesh mesh = loader.create(model);
-
-    TexturedMesh texturedMesh = new TexturedMesh(mesh, texture);
-
-    float angleModel = 0.04f;
-    float angleLight = 0.04f;
+    TexturedMesh dragon = model(loader, "dragon.obj", "stall.png");
+    TexturedMesh bunny = model(loader, "bunny.obj", "stall.png");
 
 
-    float t = 0;
-    float s = 8;
+    float angleModel = 0.0f;
+
     // Run the rendering loop until the user has attempted to close
     // the window or has pressed the ESCAPE key.
     while (!glfwWindowShouldClose(window)) {
       glfwSwapBuffers(window); // swap the color buffers
 
-      Matrix4f tr = Transformation.builder()
-          // .setTranslation(new Vector3f(2, 0, 0))
-          .setScaling(new Vector3f(1,1,1).scale(1))
-          .setRotation(new Quaternion(Vector3f.UNIT_Y, angleModel))
-          .build().transformation();
-
-
-      Matrix4f pr = PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
-
-      DirectionalLight directionalLight = new DirectionalLight(
-          new BaseLight(Color.WHITE, 0.4f),
-          new Vector3f(0, 0,1)
-      );
-
-      PointLight pointLight0 = new PointLight(
-          new BaseLight(Color.RED, 1f),
-          new Attenuation(0.021f, 0.01f, 0.01f),
-          new Vector3f(-8, 14, 5),
-          30
-      );
-
-      PointLight pointLight1 = new PointLight(
-          new BaseLight(Color.BLUE, 1f),
-          new Attenuation(0.021f, 0.01f, 0.01f),
-          new Vector3f(10, 0, 5),
-          30
-      );
-
-      PointLight pointLight = new PointLight(
-          new BaseLight(Color.GREEN, 1f),
-          new Attenuation(0.001f, 0.01f, 0.01f),
-          new Vector3f(0, 4f, 12),
-          30
-      );
-
-      SpotLight spotLight = new SpotLight(
-          pointLight,
-          new Vector3f(0, 0, -1),
-          0.98f
-      );
-
       renderer.prepare();
+
       shader.start();
+      updateShader(shader, Vector3f.ZERO, 1, angleModel);
+      renderer.render(dragon);
+      shader.stop();
 
-      shader.loadTransformationMatrix(tr);
-      shader.loadProjectionMatrix(pr);
-      shader.loadViewMatrix(view());
-
-      shader.loadBaseColor(Color.WHITE);
-      shader.loadAmbientLight(Vector3f.ZERO);
-      shader.loadDirectionalLight(directionalLight);
-      shader.loadPointLight(pointLight0, 0);
-      shader.loadPointLight(pointLight1, 1);
-      shader.loadSpotLight(spotLight, 0);
-
-      shader.loadSpecularReflection(new SpecularReflection(1f, 150f));
-
-      shader.loadEyePos(camera.getPosition());
-
-      renderer.render(texturedMesh);
+      shader.start();
+      updateShader(shader, new Vector3f(20, 0, 0), 6, -angleModel);
+      renderer.render(bunny);
       shader.stop();
 
       angleModel += 0.01;
-
-      t-=0.002;
 
       // Poll for window events. The key callback above will only be
       // invoked during this call.
@@ -258,7 +185,54 @@ public class Runner {
     }
 
     shader.clean();
+
     loader.clean();
+  }
+
+  private static Matrix4f view() {
+    return View.builder()
+        .position(camera.getPosition())
+        .forward(camera.getForward())
+        .up(camera.getUp())
+        .build()
+        .view();
+  }
+
+  private static Matrix4f transformation(Vector3f translation, float scale, float angle) {
+    return Transformation.builder()
+        .setTranslation(translation)
+        .setScaling(new Vector3f(1,1,1).scale(scale))
+        .setRotation(new Quaternion(Vector3f.UNIT_Y, angle))
+        .build().transformation();
+  }
+
+  private static Matrix4f projection() {
+    return PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
+  }
+
+  private static void updateShader(PhongShader shader, Vector3f translation, float scale, float angleModel) {
+    shader.loadTransformationMatrix(transformation(translation, scale, angleModel));
+    shader.loadProjectionMatrix(projection());
+    shader.loadViewMatrix(view());
+
+    shader.loadBaseColor(BASE_COLOR);
+    shader.loadAmbientLight(AMBIENT_LIGHT);
+    shader.loadDirectionalLight(DIRECTIONAL_LIGHT_0);
+    shader.loadPointLight(POINT_LIGHT_0, 0);
+    shader.loadPointLight(POINT_LIGHT_1, 1);
+    shader.loadPointLight(POINT_LIGHT_2, 2);
+    shader.loadSpotLight(SPOT_LIGHT_0, 0);
+
+    shader.loadSpecularReflection(SPECULAR_REFLECTION);
+
+    shader.loadEyePos(camera.getPosition());
+  }
+
+  public static TexturedMesh model(Loader loader, String modelName, String textureName) {
+    Model model = ObjLoader.loadObjModel(modelName);
+    Texture texture = loader.texture(textureName);
+    Mesh mesh = loader.create(model);
+    return new TexturedMesh(mesh, texture);
   }
 
   public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package org.sedly.sigh.shader.light;
+package org.sedly.sigh.light;
 
 public class Attenuation {
 

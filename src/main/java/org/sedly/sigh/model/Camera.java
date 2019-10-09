@@ -11,8 +11,8 @@ public class Camera {
   private Vector3f up;
 
   public Camera() {
-    this(new Vector3f(0, 4, 20),
-        Vector3f.UNIT_Z.negate(),
+    this(new Vector3f(-2, 4, 20),
+        new Vector3f(0.4f, 0, -1),
         Vector3f.UNIT_Y);
   }
 

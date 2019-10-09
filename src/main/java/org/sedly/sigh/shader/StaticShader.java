@@ -1,7 +1,7 @@
 package org.sedly.sigh.shader;
 
 import org.sedly.sigh.math.Matrix4f;
-import org.sedly.sigh.shader.light.Light;
+import org.sedly.sigh.light.Light;
 
 public class StaticShader extends ShaderProgram {
 
