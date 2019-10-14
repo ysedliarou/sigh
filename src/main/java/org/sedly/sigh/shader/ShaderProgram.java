@@ -1,14 +1,11 @@
 package org.sedly.sigh.shader;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import org.lwjgl.opengl.GL20;
 import org.sedly.sigh.math.Color;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.util.BufferUtil;
+import org.sedly.sigh.util.ResourceUtil;
 
 public abstract class ShaderProgram {
 
@@ -21,6 +18,7 @@ public abstract class ShaderProgram {
   private int vsId;
 
   private int fsId;
+
 
   public ShaderProgram(String vs, String fs) {
     vsId = load(vs, GL20.GL_VERTEX_SHADER);
@@ -50,12 +48,6 @@ public abstract class ShaderProgram {
   }
 
   protected abstract void bind();
-
-  public void init() {
-    initUniformLocations();
-  }
-
-  protected abstract void initUniformLocations();
 
   public void loadFloat(int location, float value) {
     GL20.glUniform1f(location, value);
@@ -90,21 +82,11 @@ public abstract class ShaderProgram {
   }
 
   private static int load(String file, int type) {
-    StringBuilder sb = new StringBuilder();
 
-    try {
-      BufferedReader bf = new BufferedReader(new FileReader(new File(ShaderProgram.class.getResource(file).getFile())));
-      String line;
-      while ((line = bf.readLine()) != null) {
-        sb.append(line).append("\n");
-      }
-      bf.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    String shaderSrc = ResourceUtil.loadString(file);
 
     int shaderId = GL20.glCreateShader(type);
-    GL20.glShaderSource(shaderId, sb);
+    GL20.glShaderSource(shaderId, shaderSrc);
     GL20.glCompileShader(shaderId);
 
     if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {

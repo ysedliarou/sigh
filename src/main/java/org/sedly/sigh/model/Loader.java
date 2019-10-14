@@ -1,20 +1,15 @@
 package org.sedly.sigh.model;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.sedly.sigh.util.BufferUtil;
+import org.sedly.sigh.util.ResourceUtil;
 
 public class Loader {
 
@@ -34,14 +29,9 @@ public class Loader {
 
   public Texture texture(String file) {
 
-    BufferedImage image = null;
-    try {
-      image = ImageIO.read(new File(Loader.class.getResource(file).getFile()));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    BufferedImage image = ResourceUtil.loadImage(file);
 
-    ByteBuffer byteBuffer = byteBuffer(image);
+    ByteBuffer byteBuffer = BufferUtil.byteBuffer(image);
 
     int texId  = GL11.glGenTextures();
 
@@ -81,24 +71,6 @@ public class Loader {
     vbos.add(vboId);
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboId);
     GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, BufferUtil.intBuffer(indices), GL15.GL_STATIC_DRAW);
-  }
-
-  private ByteBuffer byteBuffer(BufferedImage image) {
-    int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-    boolean alpha = image.getColorModel().hasAlpha();
-    byte[] data = new byte[image.getHeight() * image.getWidth() * 4];
-
-    for (int y = 0, i = 0; y < image.getHeight(); y++) {
-      for (int x = 0; x < image.getWidth(); x++, i+=4) {
-        int pixel = pixels[y * image.getWidth() + x];
-
-        data[i] = (byte) ((pixel >> 16) & 0xFF);
-        data[i + 1] = (byte) ((pixel >> 8) & 0xFF);
-        data[i + 2] = (byte) ((pixel) & 0xFF);
-        data[i + 3] = alpha ? (byte) ((pixel >> 24) & 0xFF) : (byte) 0xFF;
-      }
-    }
-    return BufferUtil.byteBuffer(data);
   }
 
   private void unbind() {

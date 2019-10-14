@@ -152,7 +152,6 @@ public class Runner {
     Loader loader = new Loader();
 
     PhongShader shader = new PhongShader();
-    shader.init();
 
     TexturedMesh dragon = model(loader, "dragon.obj", "stall.png");
     TexturedMesh bunny = model(loader, "bunny.obj", "stall.png");

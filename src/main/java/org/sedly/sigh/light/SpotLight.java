@@ -4,6 +4,8 @@ import org.sedly.sigh.math.Vector3f;
 
 public class SpotLight {
 
+  public static final SpotLight DEFAULT = new SpotLight(PointLight.DEFAULT, Vector3f.ZERO, 0);
+
   private PointLight pointLight;
 
   private Vector3f direction;

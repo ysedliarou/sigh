@@ -2,6 +2,8 @@ package org.sedly.sigh.light;
 
 public class SpecularReflection {
 
+  public static final SpecularReflection DEFAULT = new SpecularReflection(0, 0);
+
   private float intensity;
   private float power;
 

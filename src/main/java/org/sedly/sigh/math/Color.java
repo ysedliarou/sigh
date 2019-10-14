@@ -1,5 +1,8 @@
 package org.sedly.sigh.math;
 
+import static org.sedly.sigh.util.MathUtil.NUMBER_FORMAT;
+
+import java.text.MessageFormat;
 import org.sedly.sigh.util.MathUtil;
 
 public class Color {
@@ -57,6 +60,15 @@ public class Color {
 
   public float getA() {
     return a;
+  }
+
+  @Override
+  public String toString() {
+    String fr = NUMBER_FORMAT.get().format(r);
+    String fg = NUMBER_FORMAT.get().format(g);
+    String fb = NUMBER_FORMAT.get().format(b);
+    String fa = NUMBER_FORMAT.get().format(a);
+    return MessageFormat.format("Color[r={0},g={1},b={2},a={3}]", fr, fg, fb, fa);
   }
 
 }

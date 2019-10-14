@@ -1,5 +1,6 @@
 package org.sedly.sigh.util;
 
+import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -50,6 +51,25 @@ public class BufferUtil {
     }
 
     return floatBuffer(data);
+  }
+
+  public static ByteBuffer byteBuffer(BufferedImage image) {
+    int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+    boolean alpha = image.getColorModel().hasAlpha();
+    byte[] data = new byte[image.getHeight() * image.getWidth() * 4];
+
+    for (int y = 0, i = 0; y < image.getHeight(); y++) {
+      for (int x = 0; x < image.getWidth(); x++, i+=4) {
+        int pixel = pixels[y * image.getWidth() + x];
+
+        data[i] = (byte) ((pixel >> 16) & 0xFF);
+        data[i + 1] = (byte) ((pixel >> 8) & 0xFF);
+        data[i + 2] = (byte) ((pixel) & 0xFF);
+        data[i + 3] = alpha ? (byte) ((pixel >> 24) & 0xFF) : (byte) 0xFF;
+      }
+    }
+
+    return BufferUtil.byteBuffer(data);
   }
 
 

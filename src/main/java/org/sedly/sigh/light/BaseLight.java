@@ -4,6 +4,8 @@ import org.sedly.sigh.math.Color;
 
 public class BaseLight {
 
+  public static final BaseLight DEFAULT  = new BaseLight(Color.WHITE, 0);
+
   private Color color;
 
   private float intensity;

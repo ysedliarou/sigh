@@ -4,6 +4,8 @@ import org.sedly.sigh.math.Vector3f;
 
 public class DirectionalLight {
 
+  public static final DirectionalLight DEFAULT = new DirectionalLight(BaseLight.DEFAULT, Vector3f.ZERO);
+
   private BaseLight baseLight;
 
   private Vector3f direction;

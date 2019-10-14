@@ -3,7 +3,6 @@ package org.sedly.sigh.model;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.sedly.sigh.math.Vector3f;

@@ -2,6 +2,8 @@ package org.sedly.sigh.light;
 
 public class Attenuation {
 
+  public static final Attenuation DEFAULT = new Attenuation(0, 0 , 0);
+
   private float constant, linear, exponent;
 
   public Attenuation(float constant, float linear, float exponent) {
