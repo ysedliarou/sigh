@@ -1,7 +1,5 @@
 package org.sedly.sigh.math;
 
-import org.lwjgl.system.CallbackI.B;
-
 public class View {
 
   private Vector3f position;
