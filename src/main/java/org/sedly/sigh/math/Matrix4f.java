@@ -157,6 +157,19 @@ public class Matrix4f {
     return mult(this, -1);
   }
 
+  public static Matrix4f trans(final Matrix4f m) {
+    return new Matrix4f(new Operation(m.matrix, null) {
+      @Override
+      float operate(final int i, final int j) {
+        return this.source[j][i];
+      }
+    });
+  }
+
+  public Matrix4f trans() {
+    return trans(this);
+  }
+
   // --------------- COMMON ---------------
 
   @Override
