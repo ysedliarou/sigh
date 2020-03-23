@@ -1,7 +1,5 @@
 package org.sedly.sigh.model;
 
-import org.w3c.dom.Text;
-
 public class Mesh {
 
   private int vaoId;

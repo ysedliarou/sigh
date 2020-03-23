@@ -78,12 +78,16 @@ public class View {
 
   private static Matrix4f rotation(Vector3f forward, Vector3f up) {
     Vector3f right = forward.cross(up).normalize();
+    return rotation(forward, up, right);
+  }
+
+  private static Matrix4f rotation(Vector3f forward, Vector3f up, Vector3f right) {
 
     return new Matrix4f(new float[][] {
-        {right.getX(),     right.getY(),     right.getZ(),     0},
-        {up.getX(),        up.getY(),        up.getZ(),        0},
-        {forward.getX(),   forward.getY(),   forward.getZ(),   0},
-        {0,                0,                0,                1}
+            {right.getX(),     right.getY(),     right.getZ(),     0},
+            {up.getX(),        up.getY(),        up.getZ(),        0},
+            {forward.getX(),   forward.getY(),   forward.getZ(),   0},
+            {0,                0,                0,                1}
     });
   }
 

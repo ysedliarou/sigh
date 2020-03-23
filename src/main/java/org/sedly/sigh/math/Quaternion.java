@@ -208,10 +208,6 @@ public class Quaternion {
     return new Quaternion(x, y, z, w);
   }
 
-  public Matrix4f rotation() {
-    return Transformation.builder().setRotation(new QuaternionRotation(this)).build().transformation();
-  }
-
   // --------------- COMMON ---------------
 
   @Override

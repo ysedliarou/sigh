@@ -7,12 +7,10 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
-import org.sedly.sigh.math.Quaternion;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.View;
 import org.sedly.sigh.math.rotation.AxisToAngleRotation;
-import org.sedly.sigh.math.rotation.QuaternionRotation;
 import org.sedly.sigh.model.Camera;
 import org.sedly.sigh.shader.PhongShader;
 import org.sedly.sigh.model.Loader;
@@ -207,7 +205,7 @@ public class Runner {
         .setTranslation(translation)
         .setScaling(new Vector3f(1,1,1).scale(scale))
 //        .setRotation(new QuaternionRotation(new Quaternion(Vector3f.UNIT_Y, angle)))
-            .setRotation(new AxisToAngleRotation(Vector3f.UNIT_Y, angle))
+        .setRotation(new AxisToAngleRotation(Vector3f.UNIT_Y, angle))
         .build().transformation();
   }
 
