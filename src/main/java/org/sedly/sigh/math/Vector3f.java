@@ -86,7 +86,6 @@ public class Vector3f {
 
   // --------------- METHODS ---------------
 
-
   public Vector3f add(final Vector3f v) {
     return add(this, v);
   }
@@ -121,7 +120,7 @@ public class Vector3f {
     }
     float length = magnitude();
     if (length == 1.0f) {
-      return copy();
+      return this;
     }
     return div(this, length);
   }
@@ -134,24 +133,8 @@ public class Vector3f {
     return scale(this, -1.0f);
   }
 
-  public Vector3f rotate(final Vector3f axis, final float angle) {
-    return rotate(new Quaternion(axis, angle));
-  }
-
-  public Vector3f rotate(final Quaternion rotation) {
-    return rotation.rotate(this);
-  }
-
   public Vector3f copy() {
     return new Vector3f(x, y, z);
-  }
-
-  public Matrix4f translation() {
-    return Transformation.builder().setTranslation(this).build().transformation();
-  }
-
-  public Matrix4f scale() {
-    return Transformation.builder().setScaling(this).build().transformation();
   }
 
   // --------------- COMMON ---------------

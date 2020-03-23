@@ -1,56 +1,22 @@
-package org.sedly.sigh.math;
+package org.sedly.sigh.math.projection;
+
+import org.sedly.sigh.math.Matrix4f;
 
 public class PerspectiveProjection implements Projection {
 
-    private float near;
+    // --------------- CONSTANTS ---------------
 
-    private float far;
+    public static final float FOV = 1.4f;
 
-    private float fov;
-
-    private int width;
-
-    private int height;
-
-    private PerspectiveProjection() {
-        super();
-    }
-
-    private PerspectiveProjection(Builder builder) {
-        this.near = builder.near;
-        this.far = builder.far;
-        this.fov = builder.fov;
-        this.width = builder.width;
-        this.height = builder.height;
-    }
-
-    public float getNear() {
-        return near;
-    }
-
-    public float getFar() {
-        return far;
-    }
-
-    public float getFov() {
-        return fov;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
+    // --------------- BUILDER ---------------
 
     public static class Builder {
 
-        private float near = 0.1f;
+        private float near = NEAR;
 
-        private float far = 100f;
+        private float far = FAR;
 
-        private float fov = 1.4f;
+        private float fov = FOV;
 
         private int width;
 
@@ -90,10 +56,54 @@ public class PerspectiveProjection implements Projection {
         return new Builder().xy(width, height).z(near, far).setFov(fov);
     }
 
-    public Matrix4f projection() {
-        float aspectRatio = width / height;
-        return projection(aspectRatio, fov, near, far);
+    // --------------- PROPERTIES ---------------
+
+    private float near;
+
+    private float far;
+
+    private float fov;
+
+    private int width;
+
+    private int height;
+
+    // --------------- GETTERS ---------------
+
+    public float getNear() {
+        return near;
     }
+
+    public float getFar() {
+        return far;
+    }
+
+    public float getFov() {
+        return fov;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    // --------------- CONSTRUCTORS ---------------
+
+    private PerspectiveProjection() {
+    }
+
+    private PerspectiveProjection(Builder builder) {
+        this.near = builder.near;
+        this.far = builder.far;
+        this.fov = builder.fov;
+        this.width = builder.width;
+        this.height = builder.height;
+    }
+
+    // --------------- MATH ---------------
 
     private Matrix4f projection(float aspectRatio, float fov, float near, float far) {
         float tanHalfFov = (float) Math.tan(fov / 2);
@@ -105,6 +115,13 @@ public class PerspectiveProjection implements Projection {
                 {0,                               0,              1,                    1                           }
         });
 
+    }
+
+    // --------------- METHODS ---------------
+
+    public Matrix4f projection() {
+        float aspectRatio = width / height;
+        return projection(aspectRatio, fov, near, far);
     }
 
 }

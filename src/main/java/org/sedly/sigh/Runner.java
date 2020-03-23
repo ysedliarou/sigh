@@ -6,11 +6,13 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
-import org.sedly.sigh.math.PerspectiveProjection;
+import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.Quaternion;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.View;
+import org.sedly.sigh.math.rotation.AxisToAngleRotation;
+import org.sedly.sigh.math.rotation.QuaternionRotation;
 import org.sedly.sigh.model.Camera;
 import org.sedly.sigh.shader.PhongShader;
 import org.sedly.sigh.model.Loader;
@@ -55,7 +57,10 @@ public class Runner {
     glfwSetErrorCallback(null).free();
   }
 
-  private static Camera camera = new Camera();
+  private static Camera camera = new Camera(
+          new Vector3f(-2, 4, 20),
+          new Vector3f(0.4f, 0, -1),
+          Vector3f.UNIT_Y);
 
   private void init() {
     // Setup an error callback. The default implementation
@@ -201,7 +206,8 @@ public class Runner {
     return Transformation.builder()
         .setTranslation(translation)
         .setScaling(new Vector3f(1,1,1).scale(scale))
-        .setRotation(new Quaternion(Vector3f.UNIT_Y, angle))
+//        .setRotation(new QuaternionRotation(new Quaternion(Vector3f.UNIT_Y, angle)))
+            .setRotation(new AxisToAngleRotation(Vector3f.UNIT_Y, angle))
         .build().transformation();
   }
 

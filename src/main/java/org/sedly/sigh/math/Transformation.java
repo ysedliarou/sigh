@@ -1,16 +1,21 @@
 package org.sedly.sigh.math;
 
+import org.sedly.sigh.math.rotation.QuaternionRotation;
+import org.sedly.sigh.math.rotation.Rotation;
+
 /**
  * The direction of vector rotation is counterclockwise if angle (in radians) is positive (e.g. 90°),
  * and clockwise if angle is negative (e.g. −90°).
  */
 public final class Transformation {
 
+  // --------------- BUILDER ---------------
+
   public static final class Builder {
 
     private Vector3f translation = Vector3f.ZERO;
     private Vector3f scaling = Vector3f.XYZ;
-    private Quaternion rotation = Quaternion.UNIT;
+    private Rotation rotation = new QuaternionRotation(Quaternion.UNIT);
 
     public Builder setTranslation(final Vector3f translation) {
       if (translation != null) {
@@ -26,7 +31,7 @@ public final class Transformation {
       return this;
     }
 
-    public Builder setRotation(final Quaternion rotation) {
+    public Builder setRotation(final Rotation rotation) {
       if (rotation != null) {
         this.rotation = rotation;
       }
@@ -50,13 +55,17 @@ public final class Transformation {
         .setScaling(scaling);
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   // --------------- PROPERTIES ---------------
 
   private Vector3f translation;
 
   private Vector3f scaling;
 
-  private Quaternion rotation;
+  private Rotation rotation;
 
   // --------------- GETTERS ---------------
 
@@ -68,7 +77,7 @@ public final class Transformation {
     return scaling;
   }
 
-  public Quaternion getRotation() {
+  public Rotation getRotation() {
     return rotation;
   }
 
@@ -81,7 +90,7 @@ public final class Transformation {
   private Transformation(final Builder builder) {
     this.translation = builder.translation;
     this.scaling = builder.scaling;
-    this.rotation = builder.rotation.normalize();
+    this.rotation = builder.rotation;
   }
 
   // --------------- MATH ---------------
@@ -104,27 +113,14 @@ public final class Transformation {
     });
   }
 
-  private static Matrix4f rotation(final Quaternion q) {
-    return new Matrix4f(new float[][] {
-        {1 - 2 * q.getY() * q.getY() - 2 * q.getZ() * q.getZ(),   2 * q.getX() * q.getY() - 2 * q.getZ() * q.getW(),          2 * q.getX() * q.getZ() + 2 * q.getY() * q.getW(),          0},
-        {2 * q.getX() * q.getY() + 2 * q.getZ() * q.getW(),       1 - 2 * q.getX() * q.getX() - 2 * q.getZ() * q.getZ(),      2 * q.getY() * q.getZ() - 2 * q.getX() * q.getW(),          0},
-        {2 * q.getX() * q.getZ() - 2 * q.getY() * q.getW(),       2 * q.getY() * q.getZ() + 2 * q.getX() * q.getW(),          1 - 2 * q.getX() * q.getX() - 2 * q.getY() * q.getY(),      0},
-        {0,                                                       0,                                                          0,                                                          1}
-    });
-  }
 
   // --------------- METHODS ---------------
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
   public Matrix4f transformation() {
-    Matrix4f rotation = rotation(this.rotation);
     Matrix4f scale = scale(this.scaling);
     Matrix4f translation = translation(this.translation);
 
-    return translation.mult(rotation.mult(scale));
+    return translation.mult(this.rotation.rotation().mult(scale));
   }
 
   public Vector3f transform(final Vector3f v) {

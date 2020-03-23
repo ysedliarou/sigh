@@ -1,6 +1,7 @@
 package org.sedly.sigh.model;
 
 import org.sedly.sigh.math.Vector3f;
+import org.sedly.sigh.math.rotation.AxisToAngleRotation;
 
 public class Camera {
 
@@ -9,12 +10,6 @@ public class Camera {
   private Vector3f forward;
 
   private Vector3f up;
-
-  public Camera() {
-    this(new Vector3f(-2, 4, 20),
-        new Vector3f(0.4f, 0, -1),
-        Vector3f.UNIT_Y);
-  }
 
   public Camera(Vector3f position, Vector3f forward, Vector3f up) {
     this.position = position;
@@ -43,9 +38,9 @@ public class Camera {
   }
 
   public void rotateY(float angle) {
-    Vector3f haxis = Vector3f.UNIT_Y.cross(forward).normalize();
-    forward = forward.rotate(Vector3f.UNIT_Y, angle).normalize();
-    up = forward.cross(haxis).normalize();
+    Vector3f hAxis = Vector3f.UNIT_Y.cross(forward).normalize();
+    forward = new AxisToAngleRotation(Vector3f.UNIT_Y, angle).rotation().mult(forward).normalize();
+    up = forward.cross(hAxis).normalize();
   }
 
   public Vector3f getPosition() {

@@ -1,6 +1,8 @@
 package org.sedly.sigh.math;
 
 
+import org.sedly.sigh.math.rotation.QuaternionRotation;
+
 import static org.sedly.sigh.util.MathUtil.NUMBER_FORMAT;
 
 import java.text.MessageFormat;
@@ -207,7 +209,7 @@ public class Quaternion {
   }
 
   public Matrix4f rotation() {
-    return Transformation.builder().setRotation(this).build().transformation();
+    return Transformation.builder().setRotation(new QuaternionRotation(this)).build().transformation();
   }
 
   // --------------- COMMON ---------------

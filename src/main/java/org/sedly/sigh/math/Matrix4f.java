@@ -50,6 +50,55 @@ public class Matrix4f {
     this.matrix = fill(operation);
   }
 
+  // --------------- MATH ---------------
+
+  private static Matrix4f div(final Matrix4f m, final float a) {
+    if (a == 0.0f) {
+      throw new IllegalStateException("Zero division.");
+    }
+    return new Matrix4f(new Operation(m.matrix, null) {
+      @Override
+      float operate(final int i, final int j) {
+        return this.source[i][j] / a;
+      }
+    });
+  }
+
+  private static Matrix4f mult(final Matrix4f m, final float a) {
+    return new Matrix4f(new Operation(m.matrix, null) {
+      @Override
+      float operate(final int i, final int j) {
+        return this.source[i][j] * a;
+      }
+    });
+  }
+
+  private static Matrix4f sub(final Matrix4f m1, final Matrix4f m2) {
+    return new Matrix4f(new Operation(m1.matrix, m2.matrix) {
+      @Override
+      float operate(final int i, final int j) {
+        return this.source[i][j] - this.target[i][j];
+      }
+    });
+  }
+
+  private static Matrix4f add(final Matrix4f m1, final Matrix4f m2) {
+    return new Matrix4f(new Operation(m1.matrix, m2.matrix) {
+      @Override
+      float operate(final int i, final int j) {
+        return this.source[i][j] + this.target[i][j];
+      }
+    });
+  }
+
+  private static Vector3f mult(float[][] matrix, Vector3f v) {
+    float x = matrix[0][0] * v.getX() + matrix[0][1] * v.getY() + matrix[0][2] * v.getZ() + matrix[0][3];
+    float y = matrix[1][0] * v.getX() + matrix[1][1] * v.getY() + matrix[1][2] * v.getZ() + matrix[1][3];
+    float z = matrix[2][0] * v.getX() + matrix[2][1] * v.getY() + matrix[2][2] * v.getZ() + matrix[2][3];
+    return new Vector3f(x, y, z);
+  }
+
+
   // --------------- METHODS ---------------
 
   private static Operation createGetOperation(final float[][] matrix) {
@@ -79,55 +128,16 @@ public class Matrix4f {
     return new Matrix4f(matrix);
   }
 
-  public static Matrix4f mult(final Matrix4f m, final float a) {
-    return new Matrix4f(new Operation(m.matrix, null) {
-      @Override
-      float operate(final int i, final int j) {
-        return this.source[i][j] * a;
-      }
-    });
-  }
-
   public Matrix4f mult(final float a) {
     return mult(this, a);
-  }
-
-  public static Matrix4f div(final Matrix4f m, final float a) {
-    if (a == 0.0f) {
-      throw new IllegalStateException("Zero division.");
-    }
-    return new Matrix4f(new Operation(m.matrix, null) {
-      @Override
-      float operate(final int i, final int j) {
-        return this.source[i][j] / a;
-      }
-    });
   }
 
   public Matrix4f div(final float a) {
     return div(this, a);
   }
 
-  public static Matrix4f add(final Matrix4f m1, final Matrix4f m2) {
-    return new Matrix4f(new Operation(m1.matrix, m2.matrix) {
-      @Override
-      float operate(final int i, final int j) {
-        return this.source[i][j] + this.target[i][j];
-      }
-    });
-  }
-
   public Matrix4f add(final Matrix4f m) {
     return add(this, m);
-  }
-
-  public static Matrix4f sub(final Matrix4f m1, final Matrix4f m2) {
-    return new Matrix4f(new Operation(m1.matrix, m2.matrix) {
-      @Override
-      float operate(final int i, final int j) {
-        return this.source[i][j] - this.target[i][j];
-      }
-    });
   }
 
   public Matrix4f sub(final Matrix4f m) {
@@ -147,10 +157,7 @@ public class Matrix4f {
   }
 
   public Vector3f mult(final Vector3f v) {
-    float x = matrix[0][0] * v.getX() + matrix[0][1] * v.getY() + matrix[0][2] * v.getZ() + matrix[0][3];
-    float y = matrix[1][0] * v.getX() + matrix[1][1] * v.getY() + matrix[1][2] * v.getZ() + matrix[1][3];
-    float z = matrix[2][0] * v.getX() + matrix[2][1] * v.getY() + matrix[2][2] * v.getZ() + matrix[2][3];
-    return new Vector3f(x, y, z);
+    return mult(matrix, v);
   }
 
   public Matrix4f negate() {
