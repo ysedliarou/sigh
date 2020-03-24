@@ -184,26 +184,6 @@ public class Quaternion {
     return rotate(Vector3f.UNIT_Z);
   }
 
-  public Vector3f backward() {
-    return rotate(Vector3f.UNIT_Z.negate());
-  }
-
-  public Vector3f up() {
-    return rotate(Vector3f.UNIT_Y);
-  }
-
-  public Vector3f down() {
-    return rotate(Vector3f.UNIT_Y.negate());
-  }
-
-  public Vector3f right() {
-    return rotate(Vector3f.UNIT_X);
-  }
-
-  public Vector3f left() {
-    return rotate(Vector3f.UNIT_X.negate());
-  }
-
   public Quaternion copy() {
     return new Quaternion(x, y, z, w);
   }

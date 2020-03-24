@@ -8,6 +8,7 @@ public class DirectionalLight {
 
   private BaseLight baseLight;
 
+  // TODO: rename to position
   private Vector3f direction;
 
   public DirectionalLight(BaseLight baseLight, Vector3f direction) {

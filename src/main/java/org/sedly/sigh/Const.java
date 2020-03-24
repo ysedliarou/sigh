@@ -25,33 +25,31 @@ public class Const {
   public static PointLight POINT_LIGHT_0 = new PointLight(
       new BaseLight(Color.RED, 1f),
       new Attenuation(0.021f, 0.01f, 0.01f),
-      new Vector3f(-8, 14, 5),
+      new Vector3f(-15, 5, -15),
       30
   );
 
   public static PointLight POINT_LIGHT_1 = new PointLight(
       new BaseLight(Color.BLUE, 1f),
       new Attenuation(0.021f, 0.01f, 0.01f),
-      new Vector3f(10, 0, 5),
+      new Vector3f(0, 5, -15),
       30
   );
 
   public static PointLight POINT_LIGHT_2 = new PointLight(
       new BaseLight(new Color(1, 1, 0), 1f),
       new Attenuation(0.021f, 0.01f, 0.01f),
-      new Vector3f(28, 8, 5),
-      30
-  );
-
-  public static PointLight POINT_LIGHT_SPOT_0 = new PointLight(
-      new BaseLight(Color.GREEN, 1f),
-      new Attenuation(0.001f, 0.01f, 0.01f),
-      new Vector3f(0, 4f, 12),
+      new Vector3f(15, -5, -15),
       30
   );
 
   public static SpotLight SPOT_LIGHT_0 = new SpotLight(
-      POINT_LIGHT_SPOT_0,
+      new PointLight(
+            new BaseLight(Color.GREEN, 1f),
+            new Attenuation(0.001f, 0.01f, 0.01f),
+            new Vector3f(-7, -2, -5),
+            30
+      ),
       new Vector3f(0, 0, -1),
       0.98f
   );

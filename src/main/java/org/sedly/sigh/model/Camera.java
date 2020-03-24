@@ -1,7 +1,7 @@
 package org.sedly.sigh.model;
 
 import org.sedly.sigh.math.Vector3f;
-import org.sedly.sigh.math.rotation.AxisToAngleRotation;
+import org.sedly.sigh.math.rotation.AxisAngleRotation;
 
 public class Camera {
 
@@ -39,7 +39,7 @@ public class Camera {
 
   public void rotateY(float angle) {
     Vector3f hAxis = Vector3f.UNIT_Y.cross(forward).normalize();
-    forward = new AxisToAngleRotation(Vector3f.UNIT_Y, angle).rotation().mult(forward).normalize();
+    forward = new AxisAngleRotation(Vector3f.UNIT_Y, angle).rotation().mult(forward).normalize();
     up = forward.cross(hAxis).normalize();
   }
 

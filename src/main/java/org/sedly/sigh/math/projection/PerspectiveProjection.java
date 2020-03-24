@@ -6,35 +6,34 @@ public class PerspectiveProjection implements Projection {
 
     // --------------- CONSTANTS ---------------
 
-    public static final float FOV = 1.4f;
+    public static final float DEFAULT_FOV = 1.4f;
+
+    public static final float DEFAULT_ASPECT_RATIO = 1.333f;
 
     // --------------- BUILDER ---------------
 
     public static class Builder {
 
-        private float near = NEAR;
+        private float near = DEFAULT_NEAR;
 
-        private float far = FAR;
+        private float far = DEFAULT_FAR;
 
-        private float fov = FOV;
+        private float fov = DEFAULT_FOV;
 
-        private int width;
-
-        private int height;
+        private float aspectRatio = DEFAULT_ASPECT_RATIO;
 
         private Builder() {
             super();
         }
 
-        public Builder z(float near, float far) {
+        public Builder setDepth(float near, float far) {
             this.near = near;
             this.far = far;
             return this;
         }
 
-        public Builder xy(int width, int height) {
-            this.width = width;
-            this.height = height;
+        public Builder aspectRatio(float aspectRatio) {
+            this.aspectRatio = aspectRatio;
             return this;
         }
 
@@ -53,20 +52,16 @@ public class PerspectiveProjection implements Projection {
     }
 
     public Builder toBuilder() {
-        return new Builder().xy(width, height).z(near, far).setFov(fov);
+        return new Builder().aspectRatio(aspectRatio).setDepth(near, far).setFov(fov);
     }
 
     // --------------- PROPERTIES ---------------
 
-    private float near;
+    private final float near, far;
 
-    private float far;
+    private final float fov;
 
-    private float fov;
-
-    private int width;
-
-    private int height;
+    private final float aspectRatio;
 
     // --------------- GETTERS ---------------
 
@@ -82,25 +77,17 @@ public class PerspectiveProjection implements Projection {
         return fov;
     }
 
-    public float getWidth() {
-        return width;
+    public float getAspectRatio() {
+        return aspectRatio;
     }
 
-    public float getHeight() {
-        return height;
-    }
-
-    // --------------- CONSTRUCTORS ---------------
-
-    private PerspectiveProjection() {
-    }
+// --------------- CONSTRUCTORS ---------------
 
     private PerspectiveProjection(Builder builder) {
         this.near = builder.near;
         this.far = builder.far;
         this.fov = builder.fov;
-        this.width = builder.width;
-        this.height = builder.height;
+        this.aspectRatio = builder.aspectRatio;
     }
 
     // --------------- MATH ---------------
@@ -119,8 +106,8 @@ public class PerspectiveProjection implements Projection {
 
     // --------------- METHODS ---------------
 
+    @Override
     public Matrix4f projection() {
-        float aspectRatio = width / height;
         return projection(aspectRatio, fov, near, far);
     }
 

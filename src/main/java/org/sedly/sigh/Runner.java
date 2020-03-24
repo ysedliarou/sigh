@@ -6,11 +6,12 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
+import org.sedly.sigh.math.projection.OrthographicProjection;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.View;
-import org.sedly.sigh.math.rotation.AxisToAngleRotation;
+import org.sedly.sigh.math.rotation.AxisAngleRotation;
 import org.sedly.sigh.model.Camera;
 import org.sedly.sigh.shader.PhongShader;
 import org.sedly.sigh.model.Loader;
@@ -56,8 +57,8 @@ public class Runner {
   }
 
   private static Camera camera = new Camera(
-          new Vector3f(-2, 4, 20),
-          new Vector3f(0.4f, 0, -1),
+          new Vector3f(0, 0, 0),
+          new Vector3f(0, 0, -1),
           Vector3f.UNIT_Y);
 
   private void init() {
@@ -170,12 +171,12 @@ public class Runner {
       renderer.prepare();
 
       shader.start();
-      updateShader(shader, Vector3f.ZERO, 1, angleModel);
+      updateShader(shader, new Vector3f(-7, -5, -15), 1, angleModel);
       renderer.render(dragon);
       shader.stop();
 
       shader.start();
-      updateShader(shader, new Vector3f(20, 0, 0), 6, -angleModel);
+      updateShader(shader, new Vector3f(7, -5, -15), 6, -angleModel);
       renderer.render(bunny);
       shader.stop();
 
@@ -205,12 +206,13 @@ public class Runner {
         .setTranslation(translation)
         .setScaling(new Vector3f(1,1,1).scale(scale))
 //        .setRotation(new QuaternionRotation(new Quaternion(Vector3f.UNIT_Y, angle)))
-        .setRotation(new AxisToAngleRotation(Vector3f.UNIT_Y, angle))
+        .setRotation(new AxisAngleRotation(Vector3f.UNIT_Y, angle))
         .build().transformation();
   }
 
   private static Matrix4f projection() {
-    return PerspectiveProjection.builder().xy(WIDTH, HEIGHT).build().projection();
+    return PerspectiveProjection.builder().build().projection();
+//    return OrthographicProjection.builder().setWidth(-10, 10).setHeight(-8, 8).build().projection();
   }
 
   private static void updateShader(PhongShader shader, Vector3f translation, float scale, float angleModel) {

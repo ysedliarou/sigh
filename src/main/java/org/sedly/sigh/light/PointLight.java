@@ -2,6 +2,7 @@ package org.sedly.sigh.light;
 
 import org.sedly.sigh.math.Vector3f;
 
+// TODO: extend from DirectionalLight
 public class PointLight {
 
   public static final PointLight DEFAULT = new PointLight(BaseLight.DEFAULT, Attenuation.DEFAULT, Vector3f.ZERO, 0);

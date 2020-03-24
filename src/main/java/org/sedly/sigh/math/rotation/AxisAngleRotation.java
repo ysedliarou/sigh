@@ -3,7 +3,7 @@ package org.sedly.sigh.math.rotation;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Vector3f;
 
-public class AxisToAngleRotation implements Rotation {
+public class AxisAngleRotation implements Rotation {
 
     // --------------- PROPERTIES ---------------
 
@@ -23,7 +23,7 @@ public class AxisToAngleRotation implements Rotation {
 
     // --------------- CONSTRUCTORS ---------------
 
-    public AxisToAngleRotation(final Vector3f axis, final float angle) {
+    public AxisAngleRotation(final Vector3f axis, final float angle) {
         this.axis = axis;
         this.angle = angle;
     }
