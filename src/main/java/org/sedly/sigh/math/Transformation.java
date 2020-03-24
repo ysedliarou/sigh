@@ -9,6 +9,32 @@ import org.sedly.sigh.math.rotation.Rotation;
  */
 public final class Transformation {
 
+  public enum Order {
+
+    TRS {
+      @Override
+      protected Matrix4f execute(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
+        return translation.mult(rotation.mult(scale));
+      }
+    },
+
+    RT {
+      @Override
+      protected Matrix4f execute(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
+        return rotation.mult(translation);
+      }
+    },
+
+    NONE {
+      @Override
+      protected Matrix4f execute(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
+        return Matrix4f.IDENTITY;
+      }
+    };
+
+    protected abstract Matrix4f execute(Matrix4f translation, Matrix4f scale, Matrix4f rotation);
+  }
+
   // --------------- BUILDER ---------------
 
   public static final class Builder {
@@ -16,6 +42,7 @@ public final class Transformation {
     private Vector3f translation = Vector3f.ZERO;
     private Vector3f scaling = Vector3f.XYZ;
     private Rotation rotation = QuaternionRotation.DEFAULT;
+    private Order order = Order.TRS;
 
     public Builder setTranslation(final Vector3f translation) {
       if (translation != null) {
@@ -38,6 +65,13 @@ public final class Transformation {
       return this;
     }
 
+    public Builder setOrder(final Order order) {
+      if (order != null) {
+        this.order = order;
+      }
+      return this;
+    }
+
     private Builder() {
       super();
     }
@@ -52,7 +86,8 @@ public final class Transformation {
     return new Builder()
         .setTranslation(translation)
         .setRotation(rotation)
-        .setScaling(scaling);
+        .setScaling(scaling)
+        .setOrder(order);
   }
 
   public static Builder builder() {
@@ -66,6 +101,8 @@ public final class Transformation {
   private Vector3f scaling;
 
   private Rotation rotation;
+
+  private Order order;
 
   // --------------- GETTERS ---------------
 
@@ -81,6 +118,10 @@ public final class Transformation {
     return rotation;
   }
 
+  public Order getOrder() {
+    return order;
+  }
+
   // --------------- CONSTRUCTORS ---------------
 
   private Transformation() {
@@ -91,6 +132,7 @@ public final class Transformation {
     this.translation = builder.translation;
     this.scaling = builder.scaling;
     this.rotation = builder.rotation;
+    this.order = builder.order;
   }
 
   // --------------- MATH ---------------
@@ -113,14 +155,14 @@ public final class Transformation {
     });
   }
 
-  private static Matrix4f transform(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
-    return translation.mult(rotation.mult(scale));
-  }
-
   // --------------- METHODS ---------------
 
   public Matrix4f transform() {
     return transform(translate(translation), scale(scaling), rotation.rotate());
+  }
+
+  private Matrix4f transform(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
+    return order.execute(translation, scale, rotation);
   }
 
 }

@@ -98,10 +98,10 @@ public class PerspectiveProjection implements Projection {
         float tanHalfFov = (float) Math.tan(fov / 2);
 
         return new Matrix4f(new float[][]{
-                {1 / (tanHalfFov * aspectRatio),  0,              0,                    0                           },
-                {0,                               1 / tanHalfFov, 0,                    0                           },
-                {0,                               0,              far / (far - near),   (far * near) / (far - near) },
-                {0,                               0,              1,                    1                           }
+                {1.0f / (tanHalfFov * aspectRatio),     0,                  0,                    0                           },
+                {0,                                     1.0f / tanHalfFov,  0,                    0                           },
+                {0,                                     0,                  far / (far - near),   (far * near) / (far - near) },
+                {0,                                     0,                  1.0f,                 1.0f                        }
         });
 
     }

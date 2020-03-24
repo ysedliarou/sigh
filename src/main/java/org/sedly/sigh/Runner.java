@@ -6,11 +6,12 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
+import org.sedly.sigh.math.projection.OrthographicProjection;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
-import org.sedly.sigh.math.View;
 import org.sedly.sigh.math.rotation.AxisAngleRotation;
+import org.sedly.sigh.math.rotation.LookAtRotation;
 import org.sedly.sigh.model.Camera;
 import org.sedly.sigh.shader.PhongShader;
 import org.sedly.sigh.model.Loader;
@@ -191,24 +192,15 @@ public class Runner {
     loader.clean();
   }
 
-  private static Matrix4f view() {
-    return View.builder()
-        .position(camera.getPosition())
-        .forward(camera.getForward())
-        .up(camera.getUp())
-        .build()
-        .view();
-
-    // TODO: fix multiplication order
-
-//    return Transformation.builder()
-//            .setTranslation(camera.getPosition().negate())
-//            .setRotation(new LookAtRotation(camera.getForward(), camera.getUp()))
-//            .build().transformation();
-
+  private static Matrix4f viewMatrix() {
+    return Transformation.builder()
+            .setTranslation(camera.getPosition().negate())
+            .setRotation(new LookAtRotation(camera.getForward(), camera.getUp()))
+            .setOrder(Transformation.Order.RT)
+            .build().transform();
   }
 
-  private static Matrix4f transformation(Vector3f translation, float scale, float angle) {
+  private static Matrix4f modelMatrix(Vector3f translation, float scale, float angle) {
     return Transformation.builder()
         .setTranslation(translation)
         .setScaling(new Vector3f(1,1,1).scale(scale))
@@ -217,15 +209,15 @@ public class Runner {
         .build().transform();
   }
 
-  private static Matrix4f projection() {
+  private static Matrix4f projectionMatrix() {
     return PerspectiveProjection.DEFAULT.projection();
-//    return OrthographicProjection.builder().setWidth(-10, 10).setHeight(-8, 8).build().projection();
+//    return OrthographicProjection.builder().setWidth(-10.0f, 10.0f).setHeight(-8.0f, 8.0f).build().projection();
   }
 
   private static void updateShader(PhongShader shader, Vector3f translation, float scale, float angleModel) {
-    shader.loadTransformationMatrix(transformation(translation, scale, angleModel));
-    shader.loadProjectionMatrix(projection());
-    shader.loadViewMatrix(view());
+    shader.loadTransformationMatrix(modelMatrix(translation, scale, angleModel));
+    shader.loadProjectionMatrix(projectionMatrix());
+    shader.loadViewMatrix(viewMatrix());
 
     shader.loadBaseColor(BASE_COLOR);
     shader.loadAmbientLight(AMBIENT_LIGHT);
