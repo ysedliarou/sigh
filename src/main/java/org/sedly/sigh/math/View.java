@@ -1,5 +1,7 @@
 package org.sedly.sigh.math;
 
+import org.sedly.sigh.math.rotation.LookAtRotation;
+
 public class View {
 
   private Vector3f position;
@@ -73,26 +75,13 @@ public class View {
     return Transformation.builder()
         .setTranslation(position.negate())
         .build()
-        .transformation();
+        .transform();
   }
 
-  private static Matrix4f rotation(Vector3f forward, Vector3f up) {
-    Vector3f right = forward.cross(up).normalize();
-    return rotation(forward, up, right);
-  }
 
-  private static Matrix4f rotation(Vector3f forward, Vector3f up, Vector3f right) {
-
-    return new Matrix4f(new float[][] {
-            {right.getX(),     right.getY(),     right.getZ(),     0},
-            {up.getX(),        up.getY(),        up.getZ(),        0},
-            {forward.getX(),   forward.getY(),   forward.getZ(),   0},
-            {0,                0,                0,                1}
-    });
-  }
 
   public Matrix4f view() {
-    return rotation(forward, up).mult(translation(position));
+    return new LookAtRotation(forward, up).rotate().mult(translation(position));
   }
 
 }

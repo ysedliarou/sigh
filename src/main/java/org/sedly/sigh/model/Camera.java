@@ -39,7 +39,7 @@ public class Camera {
 
   public void rotateY(float angle) {
     Vector3f hAxis = Vector3f.UNIT_Y.cross(forward).normalize();
-    forward = new AxisAngleRotation(Vector3f.UNIT_Y, angle).rotation().mult(forward).normalize();
+    forward = new AxisAngleRotation(Vector3f.UNIT_Y, angle).rotate().mult(forward).normalize();
     up = forward.cross(hAxis).normalize();
   }
 

@@ -6,6 +6,8 @@ public class PerspectiveProjection implements Projection {
 
     // --------------- CONSTANTS ---------------
 
+    public static final PerspectiveProjection DEFAULT = new Builder().build();
+
     public static final float DEFAULT_FOV = 1.4f;
 
     public static final float DEFAULT_ASPECT_RATIO = 1.333f;

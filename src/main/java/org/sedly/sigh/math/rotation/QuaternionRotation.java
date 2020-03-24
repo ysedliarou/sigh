@@ -5,6 +5,8 @@ import org.sedly.sigh.math.Quaternion;
 
 public class QuaternionRotation implements Rotation {
 
+    public static final QuaternionRotation DEFAULT = new QuaternionRotation(Quaternion.UNIT);
+
     // --------------- PROPERTIES ---------------
 
     private Quaternion quaternion;
@@ -35,7 +37,7 @@ public class QuaternionRotation implements Rotation {
     // --------------- METHODS ---------------
 
     @Override
-    public Matrix4f rotation() {
+    public Matrix4f rotate() {
         return rotation(quaternion);
     }
 

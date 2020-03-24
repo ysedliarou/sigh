@@ -47,7 +47,7 @@ public class AxisAngleRotation implements Rotation {
     // --------------- METHODS ---------------
 
     @Override
-    public Matrix4f rotation() {
+    public Matrix4f rotate() {
         return rotation(axis, angle);
     }
 

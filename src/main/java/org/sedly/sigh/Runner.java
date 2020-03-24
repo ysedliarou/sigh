@@ -6,7 +6,6 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
-import org.sedly.sigh.math.projection.OrthographicProjection;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
@@ -199,6 +198,14 @@ public class Runner {
         .up(camera.getUp())
         .build()
         .view();
+
+    // TODO: fix multiplication order
+
+//    return Transformation.builder()
+//            .setTranslation(camera.getPosition().negate())
+//            .setRotation(new LookAtRotation(camera.getForward(), camera.getUp()))
+//            .build().transformation();
+
   }
 
   private static Matrix4f transformation(Vector3f translation, float scale, float angle) {
@@ -207,11 +214,11 @@ public class Runner {
         .setScaling(new Vector3f(1,1,1).scale(scale))
 //        .setRotation(new QuaternionRotation(new Quaternion(Vector3f.UNIT_Y, angle)))
         .setRotation(new AxisAngleRotation(Vector3f.UNIT_Y, angle))
-        .build().transformation();
+        .build().transform();
   }
 
   private static Matrix4f projection() {
-    return PerspectiveProjection.builder().build().projection();
+    return PerspectiveProjection.DEFAULT.projection();
 //    return OrthographicProjection.builder().setWidth(-10, 10).setHeight(-8, 8).build().projection();
   }
 
