@@ -57,8 +57,8 @@ public class Runner {
   }
 
   private static Camera camera = new Camera(
-          new Vector3f(0, 0, 0),
-          new Vector3f(0, 0, -1),
+          Vector3f.ZERO,
+          Vector3f.UNIT_Z.negate(),
           Vector3f.UNIT_Y);
 
   private void init() {
