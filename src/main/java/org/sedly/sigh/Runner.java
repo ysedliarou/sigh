@@ -66,7 +66,7 @@ public class Runner {
   private static Camera camera = LookAtCamera.builder()
           .setPosition(new Vector3f(0, 0, 2))
           .setTarget(new Vector3f(0, 0, -2))
-//          .setProjection(OrthographicProjection.builder().setWidth(-10.0f, 10.0f).setHeight(-8.0f, 8.0f).build())
+          .setProjection(OrthographicProjection.DEFAULT)
           .build();
 
   private void init() {
@@ -188,9 +188,9 @@ public class Runner {
       renderer.render(bunny);
       shader.stop();
 
-//      angleModel += 0.01;
+      angleModel += 0.01;
 
-
+//
        float radius = 10.0f;
       float camX = (float) Math.sin(glfwGetTime()) * radius;
       float camZ = (float) Math.cos(glfwGetTime()) * radius;

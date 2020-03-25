@@ -4,6 +4,10 @@ import org.sedly.sigh.math.Matrix4f;
 
 public class OrthographicProjection implements Projection {
 
+    public static final OrthographicProjection DEFAULT = new Builder().build();
+
+    public static final float DEFAULT_HALF = 0.5f;
+
     private float near, far;
 
     private float left, right;
@@ -53,9 +57,9 @@ public class OrthographicProjection implements Projection {
 
         private float far = DEFAULT_FAR;
 
-        private float left, right;
+        private float left = - DEFAULT_HALF, right = DEFAULT_HALF;
 
-        private float bottom, top;
+        private float bottom = - DEFAULT_HALF, top = DEFAULT_HALF;
 
         private Builder() {
             super();
