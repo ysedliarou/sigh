@@ -64,9 +64,9 @@ public class Runner {
 //          Vector3f.UNIT_Y);
 
   private static Camera camera = LookAtCamera.builder()
-          .setPosition(new Vector3f(0, 0, 2))
-          .setTarget(new Vector3f(0, 0, -2))
-          .setProjection(OrthographicProjection.DEFAULT)
+          .setPosition(new Vector3f(0, 20, -10))
+          .setTarget(new Vector3f(0, 0, -15))
+//          .setProjection(OrthographicProjection.DEFAULT)
           .build();
 
   private void init() {
@@ -191,13 +191,13 @@ public class Runner {
       angleModel += 0.01;
 
 //
-       float radius = 10.0f;
-      float camX = (float) Math.sin(glfwGetTime()) * radius;
-      float camZ = (float) Math.cos(glfwGetTime()) * radius;
-      camera =  LookAtCamera.builder()
-              .setPosition(new Vector3f(camX, 0, camZ))
-              .setTarget(new Vector3f(-7, -5, -15))
-              .build();
+//      float radius = 10.0f;
+//      float camX = (float) Math.sin(glfwGetTime()) * radius;
+//      float camZ = (float) Math.cos(glfwGetTime()) * radius;
+//      camera =  LookAtCamera.builder()
+//              .setPosition(new Vector3f(camX, 0, camZ))
+//              .setTarget(new Vector3f(-7, -5, -15))
+//              .build();
 
       // Poll for window events. The key callback above will only be
       // invoked during this call.

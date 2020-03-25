@@ -43,7 +43,7 @@ public class Quaternion {
 
   // --------------- CONSTRUCTORS ---------------
 
-  private Quaternion(final float x, final float y, final float z, final float w) {
+  public Quaternion(final float x, final float y, final float z, final float w) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -178,10 +178,6 @@ public class Quaternion {
 
   public Quaternion add(final Quaternion q) {
     return add(this, q);
-  }
-
-  public Vector3f forward() {
-    return rotate(Vector3f.UNIT_Z);
   }
 
   public Quaternion copy() {
