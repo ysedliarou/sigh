@@ -24,9 +24,13 @@ public class LookAtRotation implements Rotation {
     }
 
     public LookAtRotation(Vector3f forward, Vector3f up) {
+        this(forward, up, forward.cross(up));
+    }
+
+    public LookAtRotation(Vector3f forward, Vector3f up, Vector3f right) {
         this.forward = forward.normalize();
         this.up = up.normalize();
-        this.right = this.forward.cross(this.up).normalize();
+        this.right = right.normalize();
     }
 
     private static Matrix4f rotation(Vector3f forward, Vector3f up, Vector3f right) {

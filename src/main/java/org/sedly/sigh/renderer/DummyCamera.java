@@ -1,9 +1,13 @@
-package org.sedly.sigh.model;
+package org.sedly.sigh.renderer;
 
+import org.sedly.sigh.math.Matrix4f;
+import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
+import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.rotation.AxisAngleRotation;
+import org.sedly.sigh.math.rotation.LookAtRotation;
 
-public class Camera {
+public class DummyCamera {
 
   private Vector3f position;
 
@@ -11,7 +15,7 @@ public class Camera {
 
   private Vector3f up;
 
-  public Camera(Vector3f position, Vector3f forward, Vector3f up) {
+  public DummyCamera(Vector3f position, Vector3f forward, Vector3f up) {
     this.position = position;
     this.forward = forward.normalize();
     this.up = up.normalize();
@@ -45,5 +49,17 @@ public class Camera {
 
   public Vector3f getPosition() {
     return position;
+  }
+
+  public Matrix4f getView() {
+    return Transformation.builder()
+            .setTranslation(position.negate())
+            .setRotation(new LookAtRotation(forward, up))
+            .setOrder(Transformation.Order.RT)
+            .build().transform();
+  }
+
+  public Matrix4f getProjection() {
+    return PerspectiveProjection.DEFAULT.projection();
   }
 }

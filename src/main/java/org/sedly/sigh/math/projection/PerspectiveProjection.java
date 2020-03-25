@@ -54,7 +54,7 @@ public class PerspectiveProjection implements Projection {
     }
 
     public Builder toBuilder() {
-        return new Builder().aspectRatio(aspectRatio).setDepth(near, far).setFov(fov);
+        return builder().aspectRatio(aspectRatio).setDepth(near, far).setFov(fov);
     }
 
     // --------------- PROPERTIES ---------------

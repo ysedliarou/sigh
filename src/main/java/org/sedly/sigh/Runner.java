@@ -12,7 +12,9 @@ import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.rotation.AxisAngleRotation;
 import org.sedly.sigh.math.rotation.LookAtRotation;
-import org.sedly.sigh.model.Camera;
+import org.sedly.sigh.renderer.Camera;
+import org.sedly.sigh.renderer.DummyCamera;
+import org.sedly.sigh.renderer.LookAtCamera;
 import org.sedly.sigh.shader.PhongShader;
 import org.sedly.sigh.model.Loader;
 import org.sedly.sigh.model.Mesh;
@@ -56,10 +58,16 @@ public class Runner {
     glfwSetErrorCallback(null).free();
   }
 
-  private static Camera camera = new Camera(
-          Vector3f.ZERO,
-          Vector3f.UNIT_Z.negate(),
-          Vector3f.UNIT_Y);
+//  private static DummyCamera camera = new DummyCamera(
+//          Vector3f.ZERO,
+//          Vector3f.UNIT_Z.negate(),
+//          Vector3f.UNIT_Y);
+
+  private static Camera camera = LookAtCamera.builder()
+          .setPosition(new Vector3f(0, 0, 2))
+          .setTarget(new Vector3f(0, 0, -2))
+//          .setProjection(OrthographicProjection.builder().setWidth(-10.0f, 10.0f).setHeight(-8.0f, 8.0f).build())
+          .build();
 
   private void init() {
     // Setup an error callback. The default implementation
@@ -87,32 +95,32 @@ public class Runner {
         glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
       }
 
-      if (key == GLFW.GLFW_KEY_W && action == GLFW.GLFW_PRESS) {
-        camera.move(camera.getForward(), 2);
-        System.out.println("W");
-      }
-      if (key == GLFW.GLFW_KEY_S && action == GLFW.GLFW_PRESS) {
-        camera.move(camera.getForward(), -2);
-        System.out.println("S");
-      }
-      if (key == GLFW.GLFW_KEY_A && action == GLFW.GLFW_PRESS) {
-        camera.move(camera.getForward().cross(camera.getUp()).normalize(), -2);
-        System.out.println("A");
-      }
-      if (key == GLFW.GLFW_KEY_D && action == GLFW.GLFW_PRESS) {
-        camera.move(camera.getForward().cross(camera.getUp()).normalize(), 2);
-        System.out.println("D");
-      }
-
-      if (key == GLFW.GLFW_KEY_Q && action == GLFW.GLFW_PRESS) {
-        camera.rotateY(0.2f);
-        System.out.println("q");
-      }
-
-      if (key == GLFW.GLFW_KEY_E && action == GLFW.GLFW_PRESS) {
-        camera.rotateY(-0.2f);
-        System.out.println("e");
-      }
+//      if (key == GLFW.GLFW_KEY_W && action == GLFW.GLFW_PRESS) {
+//        camera.move(camera.getForward(), 2);
+//        System.out.println("W" + camera.getPosition());
+//      }
+//      if (key == GLFW.GLFW_KEY_S && action == GLFW.GLFW_PRESS) {
+//        camera.move(camera.getForward(), -2);
+//        System.out.println("S");
+//      }
+//      if (key == GLFW.GLFW_KEY_A && action == GLFW.GLFW_PRESS) {
+//        camera.move(camera.getForward().cross(camera.getUp()).normalize(), -2);
+//        System.out.println("A");
+//      }
+//      if (key == GLFW.GLFW_KEY_D && action == GLFW.GLFW_PRESS) {
+//        camera.move(camera.getForward().cross(camera.getUp()).normalize(), 2);
+//        System.out.println("D");
+//      }
+//
+//      if (key == GLFW.GLFW_KEY_Q && action == GLFW.GLFW_PRESS) {
+//        camera.rotateY(0.2f);
+//        System.out.println("q");
+//      }
+//
+//      if (key == GLFW.GLFW_KEY_E && action == GLFW.GLFW_PRESS) {
+//        camera.rotateY(-0.2f);
+//        System.out.println("e");
+//      }
 
     });
 
@@ -180,7 +188,16 @@ public class Runner {
       renderer.render(bunny);
       shader.stop();
 
-      angleModel += 0.01;
+//      angleModel += 0.01;
+
+
+       float radius = 10.0f;
+      float camX = (float) Math.sin(glfwGetTime()) * radius;
+      float camZ = (float) Math.cos(glfwGetTime()) * radius;
+      camera =  LookAtCamera.builder()
+              .setPosition(new Vector3f(camX, 0, camZ))
+              .setTarget(new Vector3f(-7, -5, -15))
+              .build();
 
       // Poll for window events. The key callback above will only be
       // invoked during this call.
@@ -192,14 +209,6 @@ public class Runner {
     loader.clean();
   }
 
-  private static Matrix4f viewMatrix() {
-    return Transformation.builder()
-            .setTranslation(camera.getPosition().negate())
-            .setRotation(new LookAtRotation(camera.getForward(), camera.getUp()))
-            .setOrder(Transformation.Order.RT)
-            .build().transform();
-  }
-
   private static Matrix4f modelMatrix(Vector3f translation, float scale, float angle) {
     return Transformation.builder()
         .setTranslation(translation)
@@ -209,15 +218,10 @@ public class Runner {
         .build().transform();
   }
 
-  private static Matrix4f projectionMatrix() {
-    return PerspectiveProjection.DEFAULT.projection();
-//    return OrthographicProjection.builder().setWidth(-10.0f, 10.0f).setHeight(-8.0f, 8.0f).build().projection();
-  }
-
   private static void updateShader(PhongShader shader, Vector3f translation, float scale, float angleModel) {
     shader.loadTransformationMatrix(modelMatrix(translation, scale, angleModel));
-    shader.loadProjectionMatrix(projectionMatrix());
-    shader.loadViewMatrix(viewMatrix());
+    shader.loadProjectionMatrix(camera.getProjection());
+    shader.loadViewMatrix(camera.getView());
 
     shader.loadBaseColor(BASE_COLOR);
     shader.loadAmbientLight(AMBIENT_LIGHT);
