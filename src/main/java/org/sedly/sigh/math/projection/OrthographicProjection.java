@@ -96,7 +96,7 @@ public class OrthographicProjection implements Projection {
     }
 
     @Override
-    public Matrix4f projection() {
+    public Matrix4f project() {
         return projection(left, right, bottom, top, near, far);
     }
 

@@ -13,8 +13,8 @@ public class PerspectiveProjection implements Projection {
     public static final float DEFAULT_ASPECT_RATIO = 1.333f;
 
     public static final float DEFAULT_NEAR = 0.1f;
-    public static final float DEFAULT_FAR = 1000f;
 
+    public static final float DEFAULT_FAR = 1000f;
 
     // --------------- BUILDER ---------------
 
@@ -113,7 +113,7 @@ public class PerspectiveProjection implements Projection {
     // --------------- METHODS ---------------
 
     @Override
-    public Matrix4f projection() {
+    public Matrix4f project() {
         return projection(aspectRatio, fov, near, far);
     }
 

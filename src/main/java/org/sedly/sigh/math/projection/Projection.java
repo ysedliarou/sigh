@@ -4,6 +4,6 @@ import org.sedly.sigh.math.Matrix4f;
 
 public interface Projection {
 
-  Matrix4f projection();
+  Matrix4f project();
 
 }

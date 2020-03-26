@@ -3,6 +3,7 @@ package org.sedly.sigh.renderer;
 import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
+import org.sedly.sigh.math.projection.CacheableProjection;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.projection.Projection;
 import org.sedly.sigh.math.rotation.LookAtRotation;
@@ -18,22 +19,33 @@ public class LookAtCamera implements Camera {
         private Projection projection = PerspectiveProjection.DEFAULT;
 
         public Builder setPosition(Vector3f position) {
-            this.position = position;
+            if (position != null) {
+                this.position = position;
+            }
             return this;
         }
 
         public Builder setTarget(Vector3f target) {
-            this.target = target;
+            if (target != null) {
+                this.target = target;
+            }
             return this;
         }
 
         public Builder setProjection(Projection projection) {
-            this.projection = projection;
+            if (projection != null) {
+                this.projection = projection;
+            }
             return this;
         }
 
         public LookAtCamera build() {
-            return new LookAtCamera(this);
+
+            Vector3f direction = target.sub(position).normalize();
+            Vector3f up = direction.cross(Vector3f.UNIT_Y.cross(direction));
+            Vector3f right = direction.cross(up);
+
+            return new LookAtCamera(position, direction, up, right, new CacheableProjection(projection));
         }
     }
 
@@ -61,12 +73,12 @@ public class LookAtCamera implements Camera {
         return up;
     }
 
-    private LookAtCamera(Builder builder) {
-        this.position = builder.position;
-        this.direction = builder.target.sub(builder.position).normalize();
-        this.up = direction.cross(Vector3f.UNIT_Y.cross(direction));
-        this.right = direction.cross(up);
-        this.projection = builder.projection;
+    private LookAtCamera(Vector3f position, Vector3f direction, Vector3f up, Vector3f right, Projection projection) {
+        this.position = position;
+        this.direction = direction;
+        this.up = up;
+        this.right = right;
+        this.projection = projection;
     }
 
     @Override
@@ -76,7 +88,7 @@ public class LookAtCamera implements Camera {
 
     @Override
     public Matrix4f getProjection() {
-        return projection.projection();
+        return projection.project();
     }
 
     @Override
