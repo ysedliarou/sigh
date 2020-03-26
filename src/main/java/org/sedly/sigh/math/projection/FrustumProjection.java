@@ -2,9 +2,9 @@ package org.sedly.sigh.math.projection;
 
 import org.sedly.sigh.math.Matrix4f;
 
-public class OrthographicProjection implements Projection {
+public class FrustumProjection implements Projection {
 
-    public static final OrthographicProjection DEFAULT = new Builder().build();
+    public static final FrustumProjection DEFAULT = new Builder().build();
 
     private float near, far;
 
@@ -12,11 +12,11 @@ public class OrthographicProjection implements Projection {
 
     private float bottom, top;
 
-    private OrthographicProjection() {
+    private FrustumProjection() {
         super();
     }
 
-    private OrthographicProjection(Builder builder) {
+    private FrustumProjection(Builder builder) {
         this.near = builder.near;
         this.far = builder.far;
         this.left = builder.left;
@@ -55,7 +55,7 @@ public class OrthographicProjection implements Projection {
 
         private float far = 1;
 
-        private float left = -1, right = 1;
+        private float left = -1.33f, right = 1.33f;
 
         private float bottom = -1, top = 1;
 
@@ -81,8 +81,8 @@ public class OrthographicProjection implements Projection {
             return this;
         }
 
-        public OrthographicProjection build() {
-            return new OrthographicProjection(this);
+        public FrustumProjection build() {
+            return new FrustumProjection(this);
         }
 
     }
@@ -102,12 +102,13 @@ public class OrthographicProjection implements Projection {
 
     private Matrix4f projection(float left, float right, float bottom, float top, float near, float far) {
 
-        return new Matrix4f(new float[][] {
-                {2.0f / (right - left),     0,                      0,                      -(right + left) / (right - left)   },
-                {0,                         2.0f / (top - bottom),  0,                      -(top + bottom) / (top - bottom)   },
-                {0,                         0,                      -2.0f / (far - near),   -(far + near) / (far - near)       },
-                {0,                         0,                      0,                      1.0f                               }
+        return new Matrix4f(new float[][]{
+                {(2 * near) / (right - left), 0, 0,0},
+                {0,  (2 * near) / (top - bottom), 0,0 },
+                {(right + left) / (right - left), (top + bottom) / (top - bottom), -(far + near) / (far - near), -1},
+                {0, 0, -(2 * far * near) / (far - near), 0}
         });
+
     }
 
 }

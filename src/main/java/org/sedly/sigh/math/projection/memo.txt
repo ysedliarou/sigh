@@ -1,0 +1,10 @@
+https://solarianprogrammer.com/2013/05/22/opengl-101-matrices-projection-view-model/
+
+
+.setProjection(OrthographicProjection.builder()
+                  .setDepth(-1, 1).setWidth(-15.33f, 15.33f).setHeight(-10,10)
+                  .build())
+
+.setProjection(FrustumProjection.builder()
+      .setDepth(-1, 1).setWidth(-1.33f, 1.33f).setHeight(-1,1)
+      .build())

@@ -6,6 +6,7 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 import org.sedly.sigh.math.Matrix4f;
+import org.sedly.sigh.math.projection.FrustumProjection;
 import org.sedly.sigh.math.projection.OrthographicProjection;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
 import org.sedly.sigh.math.Transformation;
@@ -64,9 +65,8 @@ public class Runner {
 //          Vector3f.UNIT_Y);
 
   private static Camera camera = LookAtCamera.builder()
-          .setPosition(new Vector3f(0, 20, -10))
+          .setPosition(new Vector3f(0, 0, 0))
           .setTarget(new Vector3f(0, 0, -15))
-//          .setProjection(OrthographicProjection.DEFAULT)
           .build();
 
   private void init() {

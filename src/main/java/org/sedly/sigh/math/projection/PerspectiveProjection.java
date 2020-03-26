@@ -12,6 +12,10 @@ public class PerspectiveProjection implements Projection {
 
     public static final float DEFAULT_ASPECT_RATIO = 1.333f;
 
+    public static final float DEFAULT_NEAR = 0.1f;
+    public static final float DEFAULT_FAR = 1000f;
+
+
     // --------------- BUILDER ---------------
 
     public static class Builder {

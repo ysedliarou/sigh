@@ -4,6 +4,7 @@ import org.sedly.sigh.math.Matrix4f;
 import org.sedly.sigh.math.Transformation;
 import org.sedly.sigh.math.Vector3f;
 import org.sedly.sigh.math.projection.PerspectiveProjection;
+import org.sedly.sigh.math.projection.Projection;
 import org.sedly.sigh.math.rotation.AxisAngleRotation;
 import org.sedly.sigh.math.rotation.LookAtRotation;
 
